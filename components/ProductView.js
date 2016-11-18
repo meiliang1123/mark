@@ -1,6 +1,6 @@
 import React from "react";
-import w from "react-weui";
-
+import w from "../react-weui/lib/";
+console.log(w);
 import './product.less';
 function _renderContent(data){
     var doms = [];
@@ -16,7 +16,6 @@ export default class View extends React.Component{
 
     render(){
         var {piccover, price, title, ...props} = this.props.data;
-        console.log(props);
         return (
             <w.Article className="product">
                 <Cover src={piccover}></Cover>

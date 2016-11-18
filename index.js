@@ -4,7 +4,6 @@
 
 import React from "react";
 import ReactDOM from "react-dom";
-import WeUI from "react-weui"
 import ReactRouter from "react-router";
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { Router, Route, IndexRoute, hashHistory } from 'react-router';

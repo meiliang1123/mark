@@ -55,15 +55,17 @@ function _genSelectSql(data, info, table){
     return `select * from  ${table} where ${upd.join(" and ")}`;
 }
 
+function _newConnection(conf, obj){
+    console.log("new connection");
+    var conn = mysql.createConnection(conf);
+    conn.connect();
+    conn.on("error", ()=>{_newConnection(conf, obj)})
+    obj.conn = conn;
+}
+
 class Mysql {
     constructor(conf){
-        var conn = this.conn = mysql.createConnection(conf);
-        conn.connect();
-        conn.on("error",function(err){
-            console.log("mysql err, new connection")
-            this.conn = new mysql.createConnection(conf);
-            this.conn.connect();
-        })
+        _newConnection(conf,this);
     }
     get(table, where){
         if ("string" != typeof table) return "err table name";
@@ -91,6 +93,7 @@ class Mysql {
     query(sql){
         return new Promise((resolve,reject)=>{
             this.conn.query(sql, (err, ret)=>{
+                if(err)
                 console.log(sql, err);
                 resolve(ret);
             })
