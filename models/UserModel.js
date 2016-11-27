@@ -4,7 +4,7 @@ import {BaseModel, BaseFactory} from "./BaseModel";
 var __mEvents = ["Login"];
 class Model extends BaseModel {
     constructor(socket){
-        var data = {uid:0,username:"default_user"};
+        var data = {};
         super(__mEvents);
         this.set(data);
         this.socket = socket;

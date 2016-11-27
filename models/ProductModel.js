@@ -12,16 +12,47 @@ class Model extends BaseModel {
 
 }
 
+var __carts = {};
 
-var __fEvents = [];
-class FProduct extends BaseFactory
+var __fEvents = ["Cart"];
+class Factory extends BaseFactory
 {
     constructor(){
         super(__fEvents, Model);
     }
+    clearCart(){
+        __carts = {};
+        this.emitCart();
+    }
+    addCart(product){
+        if(__carts[product]){
+            __carts[product] ++;
+        } else{
+            __carts[product] = 1;
+        }
+        this.emitCart();
+    }
+    getCartCount(){
+        return Object.values(__carts).reduce((ret, val)=>ret + val , 0);
+
+    }
+    getCartProduct(){
+
+        return Object.keys(__carts).map((product)=>this.get(product));
+    }
+    getCart(){
+        return __carts;
+    }
+
+
 }
 
-var fac = new FProduct();
+
+
+var fac = new Factory();
+
+
+
 fac.mEvents = __mEvents;
 fac.fEvents = __fEvents;
 

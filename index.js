@@ -1,6 +1,7 @@
 /**
  * Created by MarkMei 2016.4.7
  */
+//import 'babel-polyfill';
 
 import React from "react";
 import ReactDOM from "react-dom";
@@ -42,12 +43,12 @@ ReactDOM.render(
     <Router  history={hashHistory}>
         <Route path="/" component={Transitor}>
             <IndexRoute component={IndexCtrl}/>
+            <Route path="/product(/:id)" component={ProductCtrl}/>
+            <Route path="/involve" component={InvolveCtrl}/>
+            <Route path="/me" component={MeCtrl}/>
+            <Route path="/order" component={OrderCtrl}/>
+            <Route path="/partner" component={PartnerCtrl}/>
         </Route>
-        <Route path="/product(/:id)" component={ProductCtrl}/>
-        <Route path="/involve" component={InvolveCtrl}/>
-        <Route path="/me" component={MeCtrl}/>
-        <Route path="/order" component={OrderCtrl}/>
-        <Route path="/partner" component={PartnerCtrl}/>
 
     </Router>
 

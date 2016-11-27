@@ -3,7 +3,7 @@ import EventEmitter from "events";
 function _registerEvent(ev){
     let symbol = ev;
     this[`on${ev}`] = (cb)=>{this.on(symbol,cb);};
-    this[`remove${ev}`] = (cb)=>this.remove(symbol,cb);
+    this[`remove${ev}`] = (cb)=>this.removeListener(symbol,cb);
     this[`emit${ev}`] = ()=>{this.emit(symbol)};
 }
 
@@ -20,6 +20,7 @@ export class BaseModel extends EventEmitter {
 
     set(data){
         this.data = {...this.data, ...data};
+        Object.keys(data).map((key)=>{Reflect.defineProperty(this, key, {get: function() { return this.data[key]; },})})
         this.emitChange();
         return true;
     }
@@ -36,6 +37,7 @@ export class BaseFactory extends EventEmitter{
         super();
         this.model = model;
         this.instances = {};
+        events = ["Change", ...events];
         this.registerEvent = _registerEvent.bind(this);
         if( events instanceof Array){
             for (var key in events) this.registerEvent(events[key]);
@@ -57,12 +59,18 @@ export class BaseFactory extends EventEmitter{
     set(items) {
         if (! items instanceof Array) {
             items = [items];
+
         }
         for (var key in items) {
             var item = items[key];
             this.instance(item).set(item);
-
         }
+
+        this.emit("Change");
+    }
+    get(id){
+        if(id) return this.instances[id];
+        return this.instances;
     }
 
 

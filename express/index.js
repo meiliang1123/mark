@@ -1,3 +1,4 @@
+import dispatcher from "../classes/dispatcher";
 import {parseString} from "xml2js";
 
 var express = require("express");
@@ -15,7 +16,7 @@ router.get("/weixin",function(req, res, next){
 router.all("/weixin/callback", function(req, res, next){
 
     parseString(req.body,(err, data)=>{
-        console.log(data.xml);
+        dispatcher.dispatch({"type":"orderComplete", data:data.xml});
         res.set('Content-Type', 'text/xml');
         res.send("<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>");
     })

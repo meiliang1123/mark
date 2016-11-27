@@ -1,6 +1,8 @@
 import React from "react";
 import w from "../react-weui/lib/";
-console.log(w);
+import {CartIcon} from "./Cart";
+
+
 import './product.less';
 function _renderContent(data){
     var doms = [];
@@ -20,7 +22,10 @@ export default class View extends React.Component{
             <w.Article className="product">
                 <Cover src={piccover}></Cover>
                 <Desc {...{price,title}}></Desc>
-                <p><w.Button onClick={this.props.onBuy}>购买</w.Button></p>
+                <w.ButtonArea  direction="horizontal">
+                    <w.Button onClick={this.props.onCart} type="default" >加入购物车</w.Button>
+                    <w.Button onClick={this.props.onBuy}>购买</w.Button>
+                </w.ButtonArea>
                 <w.Cells><w.Cell>
                     <w.CellBody>
                         商品详情：
@@ -30,6 +35,8 @@ export default class View extends React.Component{
                 <section className="pics">
                 {_renderContent(props)}
                 </section>
+                <CartIcon></CartIcon>
+
             </w.Article>
 
         )

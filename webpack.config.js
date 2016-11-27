@@ -10,7 +10,8 @@ var config = {
     entry: {
         app: './index.js',
         //server:'./server.js',
-        vender: ['react', "react-dom", "react-router", 'react-addons-css-transition-group', "classnames"],
+
+        vender: ['react', "react-dom", "react-router", 'react-addons-css-transition-group', "classnames", 'babel-polyfill'],
     },
     output: {
         path: "assets/build/",

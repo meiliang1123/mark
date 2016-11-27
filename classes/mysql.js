@@ -39,7 +39,7 @@ function _genSaveSql(data, info, table){
 }
 
 function _genSelectSql(data, info, table){
-    let upd =[];
+    let upd =["1=1"];
     Object.keys(data).map((k)=>{
 
         if(!info[k]) {
@@ -93,8 +93,7 @@ class Mysql {
     query(sql){
         return new Promise((resolve,reject)=>{
             this.conn.query(sql, (err, ret)=>{
-                if(err)
-                console.log(sql, err);
+                if(err) console.log(sql, err);
                 resolve(ret);
             })
         })

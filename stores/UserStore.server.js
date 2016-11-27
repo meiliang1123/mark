@@ -3,14 +3,15 @@ import UserModel from "../models/UserModel";
 import WeiXin from "../classes/weixin";
 import Mysql from "../classes/mysql";
 
-let _users = [];
+//let _users = [];
 
 function _userConnect(socket){
     let user = socket.user = new UserModel.model(socket);
-    let id =  _users.push(user);
+//    let id =  _users.push(user);
 
     socket.on('action', function(action){
         let {type, ...data} = action;
+        console.log(action);
         if(!user.get("openid") && type!="login"){
             user.send({type:"needLogin"});
             return;
@@ -24,6 +25,12 @@ function _userConnect(socket){
 }
 
 
+function _sendUserInfo(user,openid){
+    Mysql().getOne("user", {openid}).then(({access_token, refresh_token, ...userinfo})=>{
+        user.set(userinfo);
+        user.send({type:"userinfo", userinfo})
+    });
+}
 
 
 
@@ -34,45 +41,43 @@ var actions = {
     login(data, user){
         let {username, code, openid} = data;
         if(code){
-            WeiXin.clienToken({code}).then((data)=>{
+            WeiXin.sns.clienToken({code}).then((data)=>{
                 let {access_token, openid,errcode} = data;
                 if(40029 == errcode) {
                     user.send({type:"invalidCode"})
                     return;
                 }
                 Mysql().save("user", data);
-                WeiXin.clientUserInfo({access_token,openid}).then((userinfo)=>{
-                    Mysql().save("user", userinfo);
-                    user.set(userinfo);
-                    user.send({type:"userinfo",userinfo});
-                })
 
+
+                var path = `/user/info?openid=${openid}&lang=zh_CN`;
+                WeiXin.sns.clientUserInfo({access_token,openid}).then((userinfo)=>{
+
+                    Mysql().save("user", userinfo);
+                    _sendUserInfo(user, openid);
+                })
             });
             return;
         }
         if(openid){
-            Mysql().getOne("user",{openid}).then(({openid, nickname, headimgurl})=>{
-                var userinfo = {openid, nickname, headimgurl};
-                user.set(userinfo);
-                user.send({type:"userinfo", userinfo})
-            })
+            _sendUserInfo(user, openid);
             return;
         }
-        if(username){
-            let uid = _users.findIndex(value=>value == user);
-            user.set({uid, username});
-            let userinfo = user.get();
-            user.send({type:"userinfo", userinfo});
-            return;
-        }
-
+    },
+    updateUserinfo({userinfo},user){
+        user.set(userinfo);
+        Mysql().save("user",userinfo);
+    },
+    getJSParam(data, user){
+        WeiXin.sns.jsParam(data).then((params)=>{user.send({ type:"jsParam", ...params})})
     },
     disconnect(data, user){
-        console.log(user.get(), "disconnect");
+
+        console.log(user.nickName, "disconnect");
     }
 }
 
-dispatcher.Reg(actions);
+dispatcher.Reg(actions, "user");
 
 
 export default UserModel;
