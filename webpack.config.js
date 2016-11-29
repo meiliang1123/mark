@@ -8,15 +8,12 @@ var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var config = {
 
     entry: {
-        app: './index.js',
-        //server:'./server.js',
-
+        app: './client/index.js',
         vender: ['react', "react-dom", "react-router", 'react-addons-css-transition-group', "classnames", 'babel-polyfill'],
     },
     output: {
-        path: "assets/build/",
+        path: "static/build/",
         filename: '[name].js',
-        //publicPath: '/',
     },
     module: {
         loaders:[
