@@ -3,7 +3,7 @@ import w from "../react-weui/lib/";
 
 
 
-import './product.less';
+
 function _renderContent(data){
     var doms = [];
     for(var key in data){

@@ -1,7 +1,8 @@
 import React from "react";
-import ProductStore from "../stores/ProductStore.client";
-import User from "../stores/UserStore.client";
-import ProductList from "./ProductList"
+import Page from "./components/Page"
+import ProductList from "./components/ProductList"
+import Banner from "./components/Banner"
+
 import {
     version,
 
@@ -33,8 +34,13 @@ export default class View extends React.Component{
     }
 
     render(){
+        console.log(Banner);
         return(
-            <ProductList products={this.props.products} ></ProductList>
+            <Page>
+                <Banner></Banner>
+                <ProductList {...this.props} ></ProductList>
+            </Page>
+
         )
 
     }

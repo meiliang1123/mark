@@ -1,14 +1,28 @@
 var Server = require("socket.io");
 import dispatcher from "./../client/dispatcher";
-import Stores from "../stores/ServerList";
+
 module.exports = function(http){
     var io = Server(http);
     io.on('connection', function(socket){
 
-        let action = {
-            type:"connect",
-            data:{socket}
-        }
-        dispatcher.dispatch(action);
+        socket.on('message', function(data){
+            let {action, ...param} = data;
+
+            if(!user.get("openid") && action!="login"){
+                user.send({action:"needLogin"});
+                return;
+            }
+
+            var [mod, act ] = action.split(".");
+
+            var mod = require(`../action/${mod}`);
+
+            module[act](param, socket);
+        });
+
+        socket.on('disconnect', function(){
+            require(`../action/user`)["disconnect"](socket,socket);
+
+        });
     });
 }

@@ -1,22 +1,22 @@
-import dispatcher from "../client/dispatcher";
+import dispatcher from "../dispatcher";
 
 import Product from "../models/ProductModel";
 import User from "./UserStore.client.js"
 
 Product.refresh = function (model){
     var id= model.get("id");
-    User.send({type:'getProduct', id});
+    User.send({action:'product.get', id});
 
 }
 Product.easyPay = function(id){
     var products ={};
     products[id] = 1;
-    User.send({type:'getPayParam', products});
+    User.send({action:'pay.getPayParam', products});
 }
 
 Product.cartPay = function(){
     Product.clearCart();
-    User.send({type:'getPayParam', products: Product.getCart()});
+    User.send({action:'pay.getPayParam', products: Product.getCart()});
 }
 
 dispatcher.Reg({
@@ -35,24 +35,7 @@ dispatcher.Reg({
                     console.log("aa")
                 }
         })})
-        //function onBridgeReady(){
-        //    WeixinJSBridge.invoke(
-        //        'getBrandWCPayRequest', data,
-        //        function(res){
-        //            if(res.err_msg == "get_brand_wcpay_request：ok" ) {}     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。
-        //        }
-        //    );
-        //}
-        //if (typeof WeixinJSBridge == "undefined"){
-        //    if( document.addEventListener ){
-        //        document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
-        //    }else if (document.attachEvent){
-        //        document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
-        //        document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
-        //    }
-        //}else{
-        //    onBridgeReady();
-        //}
+
     },
 }, "product");
 

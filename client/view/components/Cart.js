@@ -1,7 +1,7 @@
 import React from "react";
-import Content from "./ProductView";
-import ProductStore from "../stores/ProductStore.client";
-import User from "../stores/UserStore.client";
+import ProductStore from "../../stores/ProductStore";
+import CartStore from "../../stores/CartStore"
+import User from "../../stores/UserStore";
 //import Address from "./Address";
 import w,{
     Panel,
@@ -29,8 +29,8 @@ import w,{
 
 export default class Cart extends React.Component{
     state = {
-        products:ProductStore.getCartProduct(),
-        cart: ProductStore.getCart(),
+        products:CartStore.getCartProduct(),
+        cart: CartStore.getCart(),
         address:User.getAddress(),
     }
 
@@ -39,9 +39,9 @@ export default class Cart extends React.Component{
         User.onChange(()=>{
             this.setState({address:User.getAddress()})
         })
-        ProductStore.onCart(()=>{
+        CartStore.onCart(()=>{
 
-            this.setState({"products": ProductStore.getCartProduct()})
+            this.setState({"products": CartStore.getCartProduct()})
         });
     }
 
@@ -98,11 +98,11 @@ export default class Cart extends React.Component{
 
 export class CartIcon extends React.Component{
     state = {
-        num: ProductStore.getCartCount(),
+        num: CartStore.getCartCount(),
         showCart:false,
     }
     componentDidMount(){
-        ProductStore.onCart(()=>this.setState({"num": ProductStore.getCartCount()}));
+        CartStore.on("change",()=>this.setState({"num": CartStore.getCartCount()}));
     }
 
     toggleCart(){
@@ -122,9 +122,6 @@ export class CartIcon extends React.Component{
     }
 }
 
-function _buy(){
-
-}
 
 export class CartPopup extends React.Component{
     render(){

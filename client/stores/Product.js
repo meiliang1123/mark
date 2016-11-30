@@ -1,5 +1,5 @@
-import {BaseModel, BaseFactory} from "./BaseModel";
-
+import BaseModel from "./Model";
+import BaseFactory from "./Store";
 
 
 
@@ -14,11 +14,10 @@ class Model extends BaseModel {
 
 var __carts = {};
 
-var __fEvents = ["Cart"];
 class Factory extends BaseFactory
 {
     constructor(){
-        super(__fEvents, Model);
+
     }
     clearCart(){
         __carts = {};

@@ -7,7 +7,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var compression = require('compression')
 
-var index = require('../express/index');
+var router = require('./router');
 
 
 var app = express();
@@ -34,8 +34,8 @@ app.use(compression({filter: function (req, res) {
     }
 }))
 
-app.use(express.static(path.join(__dirname, '../static')));
-app.use('/', index);
+app.use(express.static(path.join(__dirname, '../../static')));
+app.use('/', router);
 
 
 // catch 404 and forward to error handler

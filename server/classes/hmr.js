@@ -3,7 +3,7 @@ import fs from "fs";
 //console.log(Object.keys(require), require.resolve("./classes/http"),require.cache[require.resolve("./classes/http")]);
 
 const ROOT = "/../";
-var dirs = ["classes", "components", "config", "express", "models", "stores"];
+var dirs = ["classes", "config","action"];
 dirs.map(HMR);
 
 function HMR(dir){

@@ -6,7 +6,7 @@ var path = require("path");
 var router = express.Router();
 
 router.get("/",function(req,res,next){
-    res.sendFile(path.join(__dirname, '../static', 'index.html'));
+    res.sendFile(path.join(__dirname, '../../static', 'index.html'));
 })
 
 router.get("/weixin",function(req, res, next){

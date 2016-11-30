@@ -1,5 +1,5 @@
 import io from 'socket.io-client';
-import dispatcher from "../client/dispatcher";
+import dispatcher from "../dispatcher";
 import UserModel from "../models/UserModel";
 
 

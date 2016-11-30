@@ -9,15 +9,20 @@ import ReactRouter from "react-router";
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { Router, Route, IndexRoute, hashHistory } from 'react-router';
 import FastClick from "fastclick";
-import IndexCtrl from './components/IndexCtrl';
-import LoginCtrl from './components/LoginCtrl';
-import InvolveCtrl from './components/InvolveCtrl';
-import MeCtrl from './components/MeCtrl';
-import OrderCtrl from './components/OrderCtrl';
-import PartnerCtrl from './components/PartnerCtrl';
-import ProductCtrl from './components/ProductCtrl';
-import "./components/app.less";
-import {CartIcon} from "components/Cart";
+
+//import {IndexCtrl,LoginCtrl,InvolveCtrl,MeCtrl,OrderCtrl,PartnerCtrl,ProductCtrl} from "./view/index"
+
+import IndexCtrl from "./view/IndexCtrl"
+import InvolveCtrl from "./view/InvolveCtrl"
+import LoginCtrl from "./view/LoginCtrl"
+import MeCtrl from "./view/MeCtrl";
+import OrderCtrl from "./view/OrderCtrl"
+import PartnerCtrl from "./view/PartnerCtrl"
+import ProductCtrl from "./view/ProductCtrl"
+
+
+import "./app.less";
+import {CartIcon} from "./view/components/Cart";
 
 import {
     Tab,
@@ -27,11 +32,13 @@ import {
     TabBarIcon,
     TabBarLabel,
     Article
-} from "./react-weui/lib/";
+} from "./view/react-weui/lib/";
 
-import IconGrid from './static/img/icon_nav_grid.png';
-import IconYes from './static/img/icon_nav_yes.png';
-import IconDot from './static/img/icon_nav_actionSheet.png';
+import IconGrid from './img/icon_nav_grid.png';
+import IconYes from './img/icon_nav_yes.png';
+import IconDot from './img/icon_nav_actionSheet.png';
+
+
 
 class Transitor extends React.Component {
     state = {tab:""}

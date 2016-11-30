@@ -1,6 +1,6 @@
 import React from "react";
-import ProductStore from "../stores/ProductStore.client";
-import User from "../stores/UserStore.client";
+import ProductStore from "../stores/ProductStore.js";
+import User from "../stores/UserStore.js";
 
 import {
     version,

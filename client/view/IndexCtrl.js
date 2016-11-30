@@ -1,10 +1,10 @@
 import React from "react";
-import ProductStore from "../stores/ProductStore.client";
-import User from "../stores/UserStore.client";
+import ProductStore from "../stores/ProductStore.js";
+import User from "../stores/UserStore.js";
 import {browserHistory} from "react-router";
 
 import IndexView from "./IndexView";
-User.send({type:'getProduct'});
+
 
 
 
@@ -16,10 +16,9 @@ export default class View extends React.Component{
     }
 
     componentDidMount(){
-        ProductStore.onChange(()=>{this.setState({"products":Object.values(ProductStore.get())})})
-    }
-    componentWillUnmount(){
-        ProductStore.removeChange(()=>{this.setState({"products":Object.values(ProductStore.get())})})
+        document.title = "markme· 心生MALL";
+        User.send({action:'product.getProduct'});
+        ProductStore.on("change",()=>{this.setState({"products":Object.values(ProductStore.get())})})
     }
 
     onProduct(id){
