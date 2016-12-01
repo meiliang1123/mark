@@ -1,23 +1,36 @@
 import React from "react";
-import w from "../react-weui/lib/";
+import w from "./react-weui/lib/";
 
 
 
-
-function _renderContent(data){
-    var doms = [];
-    for(var key in data){
-        if(key.substring(0, 3) == "pic" && data[key]){
-            doms.push(<Banner src={data[key]} key={key}></Banner>)
+function filter(obj){
+    var ret = [];
+    for(var key in obj){
+        if(key.substring(0, 3) == "pic" && obj[key]){
+            ret.push(obj[key]);
         }
     }
-    return doms;
+    return ret;
 }
+
 
 export default class View extends React.Component{
 
     render(){
         var {piccover, price, title, ...props} = this.props.data;
+        function onClick(current){
+
+        }
+        function _renderContent(data){
+            var doms = [];
+            for(var key in data){
+                if(key.substring(0, 3) == "pic" && data[key]){
+                    doms.push(<img key={key} onClick={()=>this.props.onPreview(data[key], Object.values(data))} src={data[key]} />)
+                }
+            }
+            return doms;
+        }
+        var pics = filter(props);
         return (
             <w.Article className="product">
                 <Cover src={piccover}></Cover>
@@ -33,7 +46,7 @@ export default class View extends React.Component{
 
                 </w.Cell></w.Cells>
                 <section className="pics">
-                {_renderContent(props)}
+                    {pics.map((url, id)=><img key={id} onClick={()=>this.props.onPreview(url, pics)} src={url} />)}
                 </section>
 
 
@@ -67,8 +80,4 @@ class Desc extends React.Component{
 }
 
 
-class Banner extends React.Component{
-    render(){
-        return <img src={this.props.src} />
-    }
-}
+

@@ -1,5 +1,5 @@
 import React,{Component} from "react";
-import w from "../react-weui/lib/";
+import w from "./react-weui/lib/";
 
 export default class LoginView extends Component{
     constructor(props){

@@ -13,20 +13,23 @@ export default class Store extends EventEmitter{
     instance(obj){
         let id ;
 
-        if(Number.isInteger(obj)){id = obj; obj = {id};}
-        else if(obj instanceof Object) {id = Number.parseInt(obj[this.keyProp]);}
+        if(Number.isInteger(obj) || typeof obj == "string"){id = obj; obj = {[this.keyProp]:id};}
+        else if(obj instanceof Object) {id = (obj[this.keyProp]);}
         else {console.log("model param err,not int or obj");return null;}
 
         if(!this.instances[id]) {
             this.instances[id] = new this.model(obj);
+        }else{
+            this.instances[id].set(obj);
         }
+
         return this.instances[id];
     }
     set(items) {
-        if (! items instanceof Array) {
+        if (! (items instanceof Array)) {
             items = [items];
-
         }
+
         for (var key in items) {
             var item = items[key];
             this.instance(item).set(item);

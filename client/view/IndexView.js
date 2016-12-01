@@ -23,20 +23,18 @@ import {
 
     //non-standard
     Popup,PopupHeader
-}  from "../react-weui/lib/";
+}  from "./react-weui/lib/";
 
 
 
 export default class View extends React.Component{
-    constructor(props){
-        super(props);
-        this.state = {"data":{}};
-    }
 
     render(){
-        console.log(Banner);
         return(
-            <Page>
+            <Page title = {this.props.saler.nickname +  " 的心生店铺"} >
+
+                <img className="logo" src="/img/logo-square.png"/>
+                <img className="saler" src={this.props.saler.headimgurl} />
                 <Banner></Banner>
                 <ProductList {...this.props} ></ProductList>
             </Page>

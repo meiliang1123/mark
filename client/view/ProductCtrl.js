@@ -3,7 +3,7 @@ import Content from "./ProductView";
 import ProductStore from "../stores/ProductStore.js";
 import User from "../stores/UserStore.js";
 import CartStore from "../stores/CartStore"
-
+import WeixinStore from "../stores/WeixinStore"
 
 ProductStore.on("payParam",(data)=>{
 
@@ -29,6 +29,11 @@ export default class View extends React.Component{
 
 
     render(){
-        return <Content onCart={()=>CartStore.addCart(this.model.id)}  onBuy={()=>ProductStore.easyPay(this.model.id)} data={this.state.data}></Content>
+        return <Content
+            onCart={()=>CartStore.addCart(this.model.id)}
+            onBuy={()=>ProductStore.easyPay(this.model.id)}
+            onPreview={WeixinStore.previewImage}
+            data={this.state.data}
+        ></Content>
     }
 }

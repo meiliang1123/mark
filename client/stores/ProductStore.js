@@ -14,6 +14,7 @@ class Model extends BaseModel {
 
 class Store extends BaseStore
 {
+
     refresh(model){
         var id= model.id;
         User.send({action:'product.get', id});
@@ -29,10 +30,7 @@ class Store extends BaseStore
         Product.clearCart();
         User.send({action:'pay.getPayParam', products: Product.getCart()});
     }
-
-
-
-
+   
 
 }
 

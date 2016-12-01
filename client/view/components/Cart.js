@@ -1,7 +1,7 @@
 import React from "react";
 import ProductStore from "../../stores/ProductStore";
 import CartStore from "../../stores/CartStore"
-import User from "../../stores/UserStore";
+import UserStore from "../../stores/UserStore";
 //import Address from "./Address";
 import w,{
     Panel,
@@ -31,16 +31,15 @@ export default class Cart extends React.Component{
     state = {
         products:CartStore.getCartProduct(),
         cart: CartStore.getCart(),
-        address:User.getAddress(),
+        address:UserStore.getAddress(),
     }
 
     componentDidMount(){
-        User.triggerAddress();
-        User.onChange(()=>{
-            this.setState({address:User.getAddress()})
+        UserStore.triggerAddress();
+        UserStore.on("change",()=>{
+            this.setState({address:UserStore.getAddress()})
         })
-        CartStore.onCart(()=>{
-
+        CartStore.on("change",()=>{
             this.setState({"products": CartStore.getCartProduct()})
         });
     }
@@ -64,7 +63,7 @@ export default class Cart extends React.Component{
                             <span> {telNumber}</span>
                         </FlexItem>
 
-                            <w.Button size="small" plain onClick={()=>{User.editAddress(true)}} >修改</w.Button>
+                            <w.Button size="small" plain onClick={()=>{UserStore.triggerAddress(true)}} >修改</w.Button>
 
                     </Flex>
 

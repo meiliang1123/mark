@@ -1,6 +1,6 @@
 import React from "react";
 import ProductStore from "../stores/ProductStore.js";
-import User from "../stores/UserStore.js";
+import UserStore from "../stores/UserStore.js";
 import {browserHistory} from "react-router";
 
 import IndexView from "./IndexView";
@@ -12,12 +12,13 @@ export default class View extends React.Component{
 
     state = {
         "products":Object.values(ProductStore.get()),
-        "saler": localStorage.saler,
+        "saler": UserStore.saler(),
     }
 
     componentDidMount(){
         document.title = "markme· 心生MALL";
-        User.send({action:'product.getProduct'});
+        UserStore.send({action:'product.getProduct'});
+        UserStore.saler().on("change",arg=>this.setState({saler:UserStore.saler()}))
         ProductStore.on("change",()=>{this.setState({"products":Object.values(ProductStore.get())})})
     }
 

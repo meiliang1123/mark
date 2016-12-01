@@ -49,11 +49,17 @@ class Action{
             _sendUserInfo(socket, openid);
         }
     }
-    updateinfo(data,socket){
+    update(data,socket){
         if(!_checkLogin(socket)){return;};
         socket.user.set(data);
         var openid = socket.user.openid;
         Mysql().save("user",{...data, openid});
+    }
+    info({openid}, socket){
+        Mysql().getOne("user", {openid}).then(({nickname, headimgurl, userName})=>{
+
+            socket.send({type:"userinfo", userinfo:{nickname,openid, headimgurl,userName}});
+        });
     }
     getJSParam(data, socket){
         WeiXin.sns.jsParam(data).then((params)=>{user.send({ type:"jsParam", ...params})})
