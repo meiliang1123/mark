@@ -71,7 +71,6 @@ function sign(data, key){
 }
 
 function jsonDecode(str){
-
     var ret = {};
     try{
         ret = JSON.parse(str);
@@ -102,7 +101,6 @@ var sns = {
             var json;
             let file = __dirname + "/../config/jsticket.json";
             let {expires, ticket, } = json = jsonDecode(fs.readFileSync(file,{encoding:"utf8"}));
-            console.log(json,"log ticket")
             if(expires > new Date().getTime()) {
                 console.log("local");
                 resolve(ticket);
@@ -191,6 +189,27 @@ var cgi = {
             return request({host, method, path, postData}).then(jsonDecode);
         })
     },
+    saveImg(media_id, filename){
+        return this.getToken().then((access_token)=>{
+            let url = `https://${_apiHost}/cgi-bin/media/get?access_token=${access_token}&media_id=${media_id}`;
+            return new Promise((resolve)=>{https.get(url,res=>{
+                var imgData = "";
+                res.setEncoding("binary"); //一定要设置response的编码为binary否则会下载下来的图片打不开
+                res.on("data", function(chunk){
+                    imgData+=chunk;
+                });
+
+                res.on("end", function(){
+                    fs.writeFile(filename, imgData, { encoding :"binary", flag:"w+"}, function(err){
+                        if(!err){
+                            resolve(filename);
+                        }
+                    });
+                });
+
+            })});
+        })
+    }
 
 
 }

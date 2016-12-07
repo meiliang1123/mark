@@ -78,12 +78,11 @@ class Mysql {
         return this.get(table, where).then((data)=>{return data[0]});
     }
     save(table,data){
-            if ("string" != typeof table) return "err table name";
-            return this.getFields(table).then((info)=> {
-                var sql = _genSaveSql(data, info, table);
-                return this.query(sql);
-            })
-
+        if ("string" != typeof table) return "err table name";
+        return this.getFields(table).then((info)=> {
+            var sql = _genSaveSql(data, info, table);
+            return this.query(sql);
+        })
     }
     getFields(table){
             let sql = `show columns from ${this.conn.config.database}.${table};`;

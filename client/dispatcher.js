@@ -6,10 +6,12 @@ var tokens = {};
 
 dispatcher.Reg = function(actions, token = "default"){
     if(tokens[token]) dispatcher.unregister(tokens[token]);
-    tokens[token] =  dispatcher.register((action)=>{
-        let {type, data, user} = action;
-        typeof actions[action.type] == "function"
-        && actions[action.type](data, user);
+    tokens[token] =  dispatcher.register((msg)=>{
+        let {type, action, ...data} = msg;
+        if(!action) action = type;
+
+        typeof actions[action] == "function"
+        && actions[action](data);
     });
 }
 

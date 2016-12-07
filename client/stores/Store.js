@@ -19,6 +19,11 @@ export default class Store extends EventEmitter{
 
         if(!this.instances[id]) {
             this.instances[id] = new this.model(obj);
+            if(typeof this.refresh == "function"
+                && Object.keys(obj).length == 1
+            ) {
+                this.refresh(this.instances[id]);
+            }
         }else{
             this.instances[id].set(obj);
         }
@@ -38,7 +43,7 @@ export default class Store extends EventEmitter{
         this.emit("change");
     }
     get(id){
-        if(id) return this.instances[id];
+        if(id) return this.instance(id);
         return this.instances;
     }
 

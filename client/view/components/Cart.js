@@ -35,8 +35,8 @@ export default class Cart extends React.Component{
     }
 
     componentDidMount(){
-        UserStore.triggerAddress();
-        UserStore.on("change",()=>{
+
+        UserStore.me.on("change",()=>{
             this.setState({address:UserStore.getAddress()})
         })
         CartStore.on("change",()=>{
@@ -45,6 +45,7 @@ export default class Cart extends React.Component{
     }
 
     render(){
+
         let {userName, postalCode , provinceName , cityName  , countryName , detailInfo, nationalCode , telNumber} = this.state.address;
         return (
             <Panel>
@@ -105,17 +106,19 @@ export class CartIcon extends React.Component{
     }
 
     toggleCart(){
+        this.state.showCart || UserStore.triggerAddress();
         this.setState({showCart: !this.state.showCart});
+
     }
 
 
     render(){
         var count = this.state.num ? <span className="num">{this.state.num}</span>: "";
-        var Cart = this.state.showCart ? <CartPopup show={this.state.showCart} onClose={()=>{}}></CartPopup> : "";
+        var Cart = <CartPopup show={this.state.showCart} onClose={()=>{}}></CartPopup> ;
 
         return <div onClick={this.toggleCart.bind(this)} className="cart">
-            <w.Icon value="waiting" />
-            {count}
+            <w.Icon value="waiting" >{count}</w.Icon>
+
             {Cart}
         </div>
     }

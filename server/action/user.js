@@ -6,9 +6,14 @@ import Model from "../classes/model"
 
 function _sendUserInfo(socket,openid){
 
-    Mysql().getOne("user", {openid}).then(({access_token, refresh_token, ...userinfo})=>{
+    Mysql().getOne("user", {openid}).then((data)=>{
+        if(data == undefined){
+            socket.send({action:"invalidCode"});
+            return;
+        }
+        var {access_token, refresh_token, ...userinfo} = data;
         socket.user = new Model(userinfo);
-        socket.send({type:"loginSucc", userinfo})
+        socket.send({action:"loginSucc", userinfo})
     });
 }
 function _checkLogin(socket){
@@ -27,17 +32,17 @@ class Action{
     login(data, socket){
         let {username, code, openid} = data;
         if(code){
-            WeiXin.sns.clienToken({code}).then((data)=>{
+            Weixin.sns.clienToken({code}).then((data)=>{
                 let {access_token, openid,errcode} = data;
                 if(40029 == errcode) {
-                    socket.send({type:"invalidCode"})
+                    socket.send({action:"invalidCode"})
                     return;
                 }
                 Mysql().save("user", data);
 
 
                 var path = `/user/info?openid=${openid}&lang=zh_CN`;
-                WeiXin.sns.clientUserInfo({access_token,openid}).then((userinfo)=>{
+                Weixin.sns.clientUserInfo({access_token,openid}).then((userinfo)=>{
 
                     Mysql().save("user", userinfo);
                     _sendUserInfo(socket, openid);
@@ -49,20 +54,26 @@ class Action{
             _sendUserInfo(socket, openid);
         }
     }
-    update(data,socket){
+    update(userinfo,socket){
+        if(userinfo.userinfo){
+            userinfo = userinfo.userinfo;
+        }
+
         if(!_checkLogin(socket)){return;};
-        socket.user.set(data);
         var openid = socket.user.openid;
-        Mysql().save("user",{...data, openid});
+        var data = {...userinfo, openid};
+        socket.user.set(data);
+        Mysql().save("user",data);
+        socket.send({action:"userinfo", data})
     }
     info({openid}, socket){
         Mysql().getOne("user", {openid}).then(({nickname, headimgurl, userName})=>{
 
-            socket.send({type:"userinfo", userinfo:{nickname,openid, headimgurl,userName}});
+            socket.send({action:"userinfo", userinfo:{nickname,openid, headimgurl,userName}});
         });
     }
     getJSParam(data, socket){
-        WeiXin.sns.jsParam(data).then((params)=>{user.send({ type:"jsParam", ...params})})
+        Weixin.sns.jsParam(data).then((params)=>{user.send({ action:"jsParam", ...params})})
     }
     disconnect(data, user){
 

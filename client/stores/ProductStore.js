@@ -1,9 +1,8 @@
 import dispatcher from "../dispatcher";
-import User from "./UserStore.js"
-
 import BaseModel from "./Model";
 import BaseStore from "./Store";
-
+import CartStore from "./CartStore";
+import UserStore from "./UserStore.js"
 
 
 
@@ -17,20 +16,21 @@ class Store extends BaseStore
 
     refresh(model){
         var id= model.id;
-        User.send({action:'product.get', id});
+        UserStore.send({action:'product.get', id});
 
     }
     easyPay(id){
         var products ={};
         products[id] = 1;
-        User.send({action:'pay.getPayParam', products});
+        UserStore.send({action:'pay.getPayParam', products});
     }
 
     cartPay(){
-        Product.clearCart();
-        User.send({action:'pay.getPayParam', products: Product.getCart()});
+
+        UserStore.send({action:'pay.getPayParam', products: CartStore.getCart()});
+        CartStore.clearCart();
     }
-   
+
 
 }
 

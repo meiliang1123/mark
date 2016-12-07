@@ -6,13 +6,20 @@ import WeixinStore from "./WeixinStore"
 import Util from "../util";
 
 let  socket = io();
-socket.on('message',function(action){
-    console.log("socket recieve",action);
-    let {type, ...data} = action;
-    dispatcher.dispatch({type, data});
+socket.on('message',function(msg){
+    console.log("socket recieve",msg);
+
+    dispatcher.dispatch(msg);
 });
 
 class Model extends BaseModel {
+    constructor(data){
+        var dft = {
+            openid:"",
+            nickname:"",
+        }
+        super({...dft, ...data})
+    }
 }
 
 
@@ -35,6 +42,10 @@ class User extends BaseStore {
         var info = Util.loginInfo();
         UserStore.send({action:"user.login", ...info});
     }
+    get me(){
+        var openid = localStorage.openid;
+        return UserStore.instance({openid})
+    }
     saler(){
         var openid = localStorage.saler;
         if(!openid) openid = "ou0vGvuFAdFHiWiaS2TybHkGP8QA";
@@ -45,7 +56,7 @@ class User extends BaseStore {
         if(!this.getAddress().detailInfo || force){
             WeixinStore.openAddress().then((data)=>{
                 UserStore.me.set(data);
-                UserStore.send({type:"updateUserinfo", userinfo:User.get()})
+                UserStore.send({action:"user.update", userinfo:data})
             })
         }
 
@@ -66,13 +77,14 @@ var actions = {
         UserStore.login();
     },
     invalidCode(){
-      Util.weixinRedirect();
+        delete localStorage.openid;
+        Util.weixinRedirect();
     },
     loginSucc({userinfo}){
         localStorage.setItem("openid", userinfo.openid);
-        UserStore.me = UserStore.instance(userinfo);
-
-        var url = window.location.origin + window.location.pathname;
+        UserStore.set(userinfo);
+        UserStore.emit("login");
+        var url = window.location.origin + window.location.pathname +  window.location.search;
         UserStore.send({action:'util.jsParam',client_url: url})
         var {code, saler} = Util.getQuery();
         if(saler){
@@ -84,7 +96,10 @@ var actions = {
         UserStore.send({action:"user.info", openid:UserStore.saler().openid});
 
     },
-    userinfo({userinfo}){
+    userinfo(userinfo){
+        if(userinfo.userinfo){
+            userinfo = userinfo.userinfo;
+        }
         console.log(userinfo);
       UserStore.set(userinfo);
     },

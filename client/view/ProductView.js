@@ -36,7 +36,7 @@ export default class View extends React.Component{
                 <Cover src={piccover}></Cover>
                 <Desc {...{price,title}}></Desc>
                 <w.ButtonArea  direction="horizontal">
-                    <w.Button onClick={this.props.onCart} type="default" >加入购物车</w.Button>
+                    <w.Button onClick={this.props.onCart} type="primary" plain >加入购物车</w.Button>
                     <w.Button onClick={this.props.onBuy}>购买</w.Button>
                 </w.ButtonArea>
                 <w.Cells><w.Cell>
@@ -72,8 +72,8 @@ class Desc extends React.Component{
        return  <section className="desc" >
             <h3 className="goods_name">{this.props.title}</h3>
             <h1 className="price">
-                <span className="now_price">￥{this.props.price}</span>
-                <span className="o_price">￥{this.props.price}</span>
+                <span className="now_price">￥{(this.props.price /100).toFixed(2)}</span>
+                <span className="o_price">￥{(this.props.price /90).toFixed(2)}</span>
             </h1>
         </section>
     }

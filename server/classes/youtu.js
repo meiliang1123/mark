@@ -12,15 +12,15 @@ var userid = '448787283';
 
 conf.setAppInfo(appid, secretId, secretKey, userid, 0)
 
-
+export default youtu;
 //youtu.imageporn('a1.jpg', function(data){
 //    console.log("imagetag:" + JSON.stringify(data));
 //});
-
+//
 //youtu.idcardocr('a.jpg', 0, function(data){
 //    console.log("idcardocr:" + JSON.stringify(data));
 //});
-
+//
 //youtu.namecardocr('a.jpg', false, function(data){
 //    console.log("namecardocr:" + JSON.stringify(data));
 //});

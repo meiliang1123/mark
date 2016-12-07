@@ -54,6 +54,7 @@ export default WeixinStore;
 
 var actions = {
     jsParam(param){
+        //alert(JSON.stringify(param));
         var def = {
             //debug:true,
             jsApiList:['openAddress',"chooseWXPay","chooseImage","previewImage", "uploadImage" ]

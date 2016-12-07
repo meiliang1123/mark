@@ -116,6 +116,9 @@ li {
 }
 /*购物车*/
 .cart {
+  position: relative;
+}
+.cart i {
   position: fixed;
   right: 15px;
   bottom: 75px;

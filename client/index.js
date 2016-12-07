@@ -19,6 +19,7 @@ import MeCtrl from "./view/MeCtrl";
 import OrderCtrl from "./view/OrderCtrl"
 import PartnerCtrl from "./view/PartnerCtrl"
 import ProductCtrl from "./view/ProductCtrl"
+import MyInfoCtrl from "./view/MyInfoCtrl"
 
 
 import "./app.less";
@@ -36,7 +37,7 @@ import {
 
 import IconGrid from './img/icon_nav_grid.png';
 import IconYes from './img/icon_nav_yes.png';
-import IconDot from './img/icon_nav_actionSheet.png';
+import IconDot from './../static/img/icon_nav_actionSheet.png';
 
 
 
@@ -72,10 +73,10 @@ class Transitor extends React.Component {
                                 key: this.props.location.pathname
                             })}
                         </ReactCSSTransitionGroup>
-                        <CartIcon></CartIcon>
+
                     </TabBody>
 
-
+                    <CartIcon></CartIcon>
                 <TabBar>
                     <TabBarItem
                         active={this.state.tab == "index"}
@@ -119,6 +120,7 @@ ReactDOM.render(
             <Route path="/me" component={MeCtrl}/>
             <Route path="/order" component={OrderCtrl}/>
             <Route path="/partner" component={PartnerCtrl}/>
+            <Route path="/myinfo" component={MyInfoCtrl}/>
         </Route>
 
     </Router>

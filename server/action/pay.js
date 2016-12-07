@@ -3,6 +3,7 @@ import Weixin from "../classes/weixin";
 
 class Action{
     getPayParam({products}, socket){
+        if(!socket.user) return ;
         var titles = [];
         var fee = 0;
         var nonce = "" + (new Date()).getTime() + parseInt(Math.random()*100);
@@ -23,7 +24,7 @@ class Action{
         })
 
         Promise.all(ordersPromise).then((orders)=>{
-            Mysql().save("combine", {nonce, fee})
+            Mysql().save("combine", {nonce, fee, openid, userName, telNumber, address})
 
             let body = titles.join("\n"),
                 out_trade_no = nonce,
@@ -35,20 +36,6 @@ class Action{
             socket.send({type:'payParam', payParam});
         });  //*/
     }
-    orderComplete(data){
-        //sign check  first to ensure security!!
-        var nonce = data.out_trade_no[0],
-            dealno = data.transaction_id[0],
-            fee = data.total_fee[0];
-
-        Mysql().save("combine", {nonce, dealno, fee})
-
-        var proms = Mysql().get("orders",{nonce}).then((orders)=>{
-            orders.map(Order.succ);
-        })
-
-    }
-
 }
 
 export default new Action();

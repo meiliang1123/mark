@@ -1,13 +1,30 @@
 import Weixin from "./weixin"
+import Mysql from "./mysql"
 
+class Order{
+    combinePayed(data){
+        //sign check  first to ensure security!!
+        var nonce = data.out_trade_no[0],
+            dealno = data.transaction_id[0],
+            fee = data.total_fee[0];
 
-function succ(order){
-    var {provider, saler, openid, fee, userName, telNumber, address, timestamp} = order;
-    Weixin.cgi.post("/message/template/send",tpl_deliver(provider,{userName, telNumber, address, timestamp}))
+        Mysql().save("combine", {nonce, dealno, fee})
+
+        Mysql().getOne("combine", {nonce}).then((combine)=>{
+            Mysql().get("orders",{nonce}).then((orders)=>{
+
+                orders.map(order=>this.succ({...order, ...combine}));
+            })
+        })
+    }
+    succ(order){
+        var {provider, saler, openid, fee, userName, telNumber, address, nonce} = order;
+
+        Weixin.cgi.post("/message/template/send",tpl_deliver(provider,{userName, telNumber, address, nonce}))
+    }
 }
 
-var tpl_deliver = (touser,  { userName, telNumber, address, timestamp })=>{
-    console.log(timestamp);
+var tpl_deliver = (touser,  { userName, telNumber, address, nonce })=>{
     return {
         touser: touser,
         template_id:'XxCYbUEVEukvlY5NeCNgBx9AV9fyXwF3t3Cg5CdlnEM',
@@ -30,7 +47,7 @@ var tpl_deliver = (touser,  { userName, telNumber, address, timestamp })=>{
                 "color":"#173177"
             },
             "keyword4": {
-                "value":(new Date(parseInt(timestamp))).toLocaleString(), //订单时间
+                "value":(new Date(parseInt(nonce / 100))).toLocaleString(), //订单时间
                 "color":"#173177"
             },
             "remark":{
@@ -41,10 +58,8 @@ var tpl_deliver = (touser,  { userName, telNumber, address, timestamp })=>{
     }
 }
 
-//var a = 3;
-export default  {
-    succ,
-}
+
+export default  new Order();
 
 
 

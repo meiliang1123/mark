@@ -16,6 +16,7 @@ function loginInfo(){
     if(code){
         return {code};
     }
+    weixinRedirect();
 }
 
 function weixinRedirect () {
