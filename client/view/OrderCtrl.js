@@ -68,11 +68,12 @@ export default class View extends React.Component{
         OrderStore.on("change", ()=>{this.setState({orders:OrderStore.get()})})
         ProductStore.on("change",()=>{this.forceUpdate()})
     }
+
     render(){
         var groups = {}
         for(var oid in this.state.orders){
             var order = this.state.orders[oid];
-            var gid = `${order.nonce}-${order.provider}`;
+            var gid = [order.nonce, order.provider];
             if(!groups[gid]) groups[gid] = [];
             groups[gid].push(order);
         }
@@ -89,11 +90,7 @@ export default class View extends React.Component{
 
         return(
             <Page title="我的订单">
-
                     {comps}
-
-
-
             </Page>
         )
 

@@ -10,6 +10,15 @@ export default class Store extends EventEmitter{
 
     }
 
+    filter(obj){
+        return Object.values(this.instances).filter((model,idx, arr)=>{
+            for (var key in obj){
+                if(obj[key] != model[key]) return false;
+            }
+            return true;
+        })
+    }
+
     instance(obj){
         let id ;
 

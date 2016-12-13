@@ -22,12 +22,12 @@ import {
 
 export default class View extends Component{
     render(){
-        var {products} = this.props;
+        var {products, title = "商品列表"} = this.props;
 
         return (
             <Panel>
                 <PanelHeader>
-                    Media with image
+                    {title}
                 </PanelHeader>
                 <PanelBody>
                     {products.map((prod)=>{return this._renderProduct(prod)})}

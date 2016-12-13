@@ -66,7 +66,6 @@ function sign(data, key){
         arr.push(`${k}=${data[k]}`);
     }
     arr.push(`key=${key}`);
-    //console.log(arr.join("&"));
     return md5(arr.join("&"));
 }
 
@@ -94,7 +93,13 @@ var sns = {
         let lang="zh_CN",
             host = _apiHost,
             path = "/sns/userinfo?" + querystring.stringify({access_token,openid,lang});
-        return request({host,path}).then((data)=>jsonDecode(data));
+        return request({host,path})
+            .then((data)=>{
+                var ret = jsonDecode(data);
+                if(ret.sex == 1) ret.sex = "男";
+                if(ret.sex == 2) ret.sex = "女";
+                return ret;
+            });
     },
     getTicket(){
         return new Promise((resolve)=>{
@@ -245,15 +250,16 @@ var pay = {
                 'Content-Length': Buffer.byteLength(postData)
             }
         };
-        console.log(obj);
+        console.log(obj,"before send");
         return new Promise(function(resolve){
             var req = https.request(options, (res)=>{
+               if(res.headers["content-length"] == 0){
+                   console.log("returned nothing with request data:", postData)
+               }
                 res.setEncoding("utf8");
-
                 res.on("data",(xml)=>{
                     console.log(xml, "getData");
                     parseString(xml,(err, data)=>{
-                        console.log(err);
                         resolve(data.xml.prepay_id[0])
                     })
                 });

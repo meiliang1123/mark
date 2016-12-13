@@ -2,27 +2,34 @@ import Mysql from "./classes/mysql";
 import Weixin from "./classes/weixin";
 import Youtu from "./classes/youtu"
 import Order from "./classes/order"
+import Util from "./action/util"
+
+Util.imageWithQR({});
+
+//require("./classes/wxdeliver")("aaa");
 
 
+//Mysql().save("provider",{openid:"ou0vGvuFAdFHiWiaS2TybHkGP8QA",category:"hk"});
 
-var data =  { appid: [ 'wx5f6db5bf7d4d7ad1' ],
-    bank_type: [ 'CFT' ],
-    cash_fee: [ '3' ],
-    fee_type: [ 'CNY' ],
-    is_subscribe: [ 'Y' ],
-    mch_id: [ '1325577401' ],
-    nonce_str: [ 'mk1479883308959' ],
-    openid: [ 'ou0vGvuFAdFHiWiaS2TybHkGP8QA' ],
-    out_trade_no: [ '147988330895744' ],
-    result_code: [ 'SUCCESS' ],
-    return_code: [ 'SUCCESS' ],
-    sign: [ '6236D38A77432CC5D6C7EC5CD96ED97A' ],
-    time_end: [ '20161123144155' ],
-    total_fee: [ '3' ],
-    trade_type: [ 'JSAPI' ],
-    transaction_id: [ '4000562001201611230583006693' ] };
 
-Order.combinePayed(data);
+//var data =  { appid: [ 'wx5f6db5bf7d4d7ad1' ],
+//    bank_type: [ 'CFT' ],
+//    cash_fee: [ '3' ],
+//    fee_type: [ 'CNY' ],
+//    is_subscribe: [ 'Y' ],
+//    mch_id: [ '1325577401' ],
+//    nonce_str: [ 'mk1479883308959' ],
+//    openid: [ 'ou0vGvuFAdFHiWiaS2TybHkGP8QA' ],
+//    out_trade_no: [ '147988330895744' ],
+//    result_code: [ 'SUCCESS' ],
+//    return_code: [ 'SUCCESS' ],
+//    sign: [ '6236D38A77432CC5D6C7EC5CD96ED97A' ],
+//    time_end: [ '20161123144155' ],
+//    total_fee: [ '3' ],
+//    trade_type: [ 'JSAPI' ],
+//    transaction_id: [ '4000562001201611230583006693' ] };
+//
+//Order.combinePayed(data);
 
 //var file = "static/idcard.jpg";
 //Youtu.idcardocr(file, 0, function(data){

@@ -58,6 +58,10 @@ webpackJsonp([0],[
 
 	var _MyInfoCtrl2 = _interopRequireDefault(_MyInfoCtrl);
 
+	var _ProviderCtrl = __webpack_require__(749);
+
+	var _ProviderCtrl2 = _interopRequireDefault(_ProviderCtrl);
+
 	__webpack_require__(442);
 
 	var _Cart = __webpack_require__(446);
@@ -203,7 +207,8 @@ webpackJsonp([0],[
 	        _react2.default.createElement(_reactRouter.Route, { path: "/me", component: _MeCtrl2.default }),
 	        _react2.default.createElement(_reactRouter.Route, { path: "/order", component: _OrderCtrl2.default }),
 	        _react2.default.createElement(_reactRouter.Route, { path: "/partner", component: _PartnerCtrl2.default }),
-	        _react2.default.createElement(_reactRouter.Route, { path: "/myinfo", component: _MyInfoCtrl2.default })
+	        _react2.default.createElement(_reactRouter.Route, { path: "/myinfo", component: _MyInfoCtrl2.default }),
+	        _react2.default.createElement(_reactRouter.Route, { path: "/provider", component: _ProviderCtrl2.default })
 	    )
 	), document.getElementById('root'));
 
@@ -1481,6 +1486,10 @@ webpackJsonp([0],[
 	var ProductStore = new Store(Model);
 	exports.default = ProductStore;
 
+
+	_UserStore2.default.on("login", function () {
+	    _UserStore2.default.send({ action: "product.get" });
+	});
 
 	_dispatcher2.default.Reg({
 	    product: function product(_ref, user) {
@@ -9876,6 +9885,16 @@ webpackJsonp([0],[
 	    }
 
 	    _createClass(Store, [{
+	        key: "filter",
+	        value: function filter(obj) {
+	            return Object.values(this.instances).filter(function (model, idx, arr) {
+	                for (var key in obj) {
+	                    if (obj[key] != model[key]) return false;
+	                }
+	                return true;
+	            });
+	        }
+	    }, {
 	        key: "instance",
 	        value: function instance(obj) {
 	            var id = void 0;
@@ -10172,7 +10191,10 @@ webpackJsonp([0],[
 	        value: function render() {
 	            var _this2 = this;
 
-	            var products = this.props.products;
+	            var _props = this.props,
+	                products = _props.products,
+	                _props$title = _props.title,
+	                title = _props$title === undefined ? "商品列表" : _props$title;
 
 
 	            return _react2.default.createElement(
@@ -10181,7 +10203,7 @@ webpackJsonp([0],[
 	                _react2.default.createElement(
 	                    _lib.PanelHeader,
 	                    null,
-	                    "Media with image"
+	                    title
 	                ),
 	                _react2.default.createElement(
 	                    _lib.PanelBody,
@@ -23974,6 +23996,10 @@ webpackJsonp([0],[
 	            icon: _react2.default.createElement("img", { src: _icon_nav_grid2.default }),
 	            label: '我的订单',
 	            href: '#/order'
+	        }, {
+	            icon: _react2.default.createElement("img", { src: _icon_nav_grid2.default }),
+	            label: '供应商信息',
+	            href: '#/provider'
 	        }], _this.state = _extends({}, _UserStore2.default.me.data), _temp), _possibleConstructorReturn(_this, _ret);
 	    }
 
@@ -24174,7 +24200,7 @@ webpackJsonp([0],[
 	            var groups = {};
 	            for (var oid in this.state.orders) {
 	                var order = this.state.orders[oid];
-	                var gid = order.nonce + "-" + order.provider;
+	                var gid = [order.nonce, order.provider];
 	                if (!groups[gid]) groups[gid] = [];
 	                groups[gid].push(order);
 	            }
@@ -25653,6 +25679,359 @@ webpackJsonp([0],[
 	        OrderStore.set(_orders);
 	    }
 	}, "order");
+
+/***/ },
+/* 749 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _ProductStore = __webpack_require__(236);
+
+	var _ProductStore2 = _interopRequireDefault(_ProductStore);
+
+	var _UserStore = __webpack_require__(240);
+
+	var _UserStore2 = _interopRequireDefault(_UserStore);
+
+	var _OrderStore = __webpack_require__(748);
+
+	var _OrderStore2 = _interopRequireDefault(_OrderStore);
+
+	var _ProviderStore = __webpack_require__(750);
+
+	var _ProviderStore2 = _interopRequireDefault(_ProviderStore);
+
+	var _ProductList = __webpack_require__(296);
+
+	var _ProductList2 = _interopRequireDefault(_ProductList);
+
+	var _lib = __webpack_require__(297);
+
+	var _Page = __webpack_require__(295);
+
+	var _Page2 = _interopRequireDefault(_Page);
+
+	var _icon_nav_grid = __webpack_require__(447);
+
+	var _icon_nav_grid2 = _interopRequireDefault(_icon_nav_grid);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var View = function (_React$Component) {
+	    _inherits(View, _React$Component);
+
+	    function View() {
+	        var _ref;
+
+	        var _temp, _this, _ret;
+
+	        _classCallCheck(this, View);
+
+	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	            args[_key] = arguments[_key];
+	        }
+
+	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = View.__proto__ || Object.getPrototypeOf(View)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
+	            primary: "香港代购",
+	            menu: [{
+	                title: "香港代购",
+	                comp: _react2.default.createElement(HK, null)
+	            }, {
+	                title: "我的产品",
+	                comp: _react2.default.createElement(MyProduct, null)
+	            }, {
+	                title: "我的订单",
+	                comp: _react2.default.createElement(MyOrder, null)
+	            }]
+
+	        }, _temp), _possibleConstructorReturn(_this, _ret);
+	    }
+
+	    _createClass(View, [{
+	        key: "componentDidMount",
+	        value: function componentDidMount() {
+	            var _this2 = this;
+
+	            //ProviderStore.on("change", ()=>{this.setState({orders:OrderStore.get()})})
+	            _ProviderStore2.default.on("change", function () {
+	                _this2.forceUpdate();
+	            });
+	        }
+	    }, {
+	        key: "_genContent",
+	        value: function _genContent() {
+	            var _state = this.state,
+	                menu = _state.menu,
+	                primary = _state.primary;
+
+	            var content = null;
+	            var that = this;
+	            var click = function click(primary) {
+	                return function () {
+	                    that.setState({ primary: primary });
+	                };
+	            };
+	            var comp = menu.map(function (item) {
+	                var p = item.title == primary;
+	                if (p) content = item.comp;
+	                return _react2.default.createElement(
+	                    _lib.PreviewButton,
+	                    { key: item.title, primary: item.title == primary, onClick: click(item.title) },
+	                    item.title
+	                );
+	            });
+
+	            return _react2.default.createElement(
+	                "div",
+	                null,
+	                _react2.default.createElement(
+	                    _lib.Preview,
+	                    null,
+	                    _react2.default.createElement(
+	                        _lib.PreviewFooter,
+	                        null,
+	                        comp
+	                    )
+	                ),
+	                content
+	            );
+	        }
+	    }, {
+	        key: "render",
+	        value: function render() {
+
+	            return _react2.default.createElement(
+	                _Page2.default,
+	                { title: "\u6211\u7684\u4F9B\u5E94\u5546\u4FE1\u606F" },
+	                _react2.default.createElement(
+	                    _lib.Cells,
+	                    null,
+	                    _react2.default.createElement(
+	                        _lib.Cell,
+	                        null,
+	                        _react2.default.createElement(
+	                            _lib.CellBody,
+	                            null,
+	                            "\u60A8\u5E97\u94FA\u7684\u5546\u54C1\u4E2D\uFF0C\u60A8\u6709\u4F9B\u5E94\u5546\u8EAB\u4EFD\u7684\u5546\u54C1\u4E0B\u5355\u540E\u90FD\u4F1A\u88AB\u6307\u6D3E\u5230\u60A8\u53D1\u8D27\uFF0C\u7531\u60A8\u4E3A\u7528\u6237\u5B8C\u6210\u540E\u7EED\u670D\u52A1\uFF0C\u8BF7\u786E\u4FDD\u6EE1\u8DB3\u7528\u6237\u9700\u6C42\uFF0C\u8DDF\u5BA2\u6237\u4FDD\u6301\u957F\u4E45\u7684\u5408\u4F5C\uFF01"
+	                        )
+	                    )
+	                ),
+	                _react2.default.createElement("br", null),
+	                this._genContent(),
+	                _react2.default.createElement("br", null),
+	                _react2.default.createElement(
+	                    _lib.Cells,
+	                    null,
+	                    _react2.default.createElement(
+	                        _lib.Cell,
+	                        null,
+	                        _react2.default.createElement(
+	                            _lib.CellBody,
+	                            null,
+	                            "Q&A:\u4F9B\u5E94\u5546\u7684\u8D27\u6B3E\u4F1A\u6839\u636E\u5E73\u53F0\u89C4\u5219\u548C\u7528\u6237\u7684\u8981\u6C42\u5728\u6307\u5B9A\u9636\u6BB5\u5212\u6B3E\u5230\u60A8\u7684\u5FAE\u4FE1\u8D26\u6237\uFF0C\u8DDF",
+	                            _react2.default.createElement(
+	                                "strong",
+	                                null,
+	                                "markme\xB7 \u5408\u4F19\u4EBA"
+	                            ),
+	                            "\u7684\u4F53\u7CFB\u662F\u72EC\u7ACB\u7684"
+	                        )
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+
+	    return View;
+	}(_react2.default.Component);
+
+	exports.default = View;
+
+	var HK = function (_React$Component2) {
+	    _inherits(HK, _React$Component2);
+
+	    function HK() {
+	        _classCallCheck(this, HK);
+
+	        return _possibleConstructorReturn(this, (HK.__proto__ || Object.getPrototypeOf(HK)).apply(this, arguments));
+	    }
+
+	    _createClass(HK, [{
+	        key: "componentDidMount",
+	        value: function componentDidMount() {
+	            var _this4 = this;
+
+	            //ProviderStore.on("change", ()=>{this.setState({orders:OrderStore.get()})})
+	            _ProviderStore2.default.on("change", function () {
+	                _this4.forceUpdate();
+	            });
+	        }
+	    }, {
+	        key: "render",
+	        value: function render() {
+	            var isHK = _ProviderStore2.default.isHK();
+	            var yes = _react2.default.createElement(_ProductList2.default, { title: "\u9999\u6E2F\u4EE3\u8D2D\u5546\u54C1", products: _ProductStore2.default.filter({ category: "hk" }) });
+	            var no = _react2.default.createElement(
+	                _lib.Cells,
+	                null,
+	                _react2.default.createElement(
+	                    _lib.Cell,
+	                    null,
+	                    "\u60A8\u8FD8\u672A\u6210\u4E3A\u6211\u4EEC\u5408\u4F5C\u9999\u6E2F\u4EE3\u8D2D"
+	                )
+	            );
+	            return isHK ? yes : no;
+	        }
+	    }]);
+
+	    return HK;
+	}(_react2.default.Component);
+
+	var MyProduct = function (_React$Component3) {
+	    _inherits(MyProduct, _React$Component3);
+
+	    function MyProduct() {
+	        _classCallCheck(this, MyProduct);
+
+	        return _possibleConstructorReturn(this, (MyProduct.__proto__ || Object.getPrototypeOf(MyProduct)).apply(this, arguments));
+	    }
+
+	    _createClass(MyProduct, [{
+	        key: "render",
+	        value: function render() {
+	            return _react2.default.createElement(
+	                _lib.Cell,
+	                null,
+	                "\u4F9B\u5E94\u5546\u4EA7\u54C1"
+	            );
+	        }
+	    }]);
+
+	    return MyProduct;
+	}(_react2.default.Component);
+
+	var MyOrder = function (_React$Component4) {
+	    _inherits(MyOrder, _React$Component4);
+
+	    function MyOrder() {
+	        _classCallCheck(this, MyOrder);
+
+	        return _possibleConstructorReturn(this, (MyOrder.__proto__ || Object.getPrototypeOf(MyOrder)).apply(this, arguments));
+	    }
+
+	    _createClass(MyOrder, [{
+	        key: "render",
+	        value: function render() {
+	            return _react2.default.createElement(
+	                _lib.Cell,
+	                null,
+	                "\u4F9B\u5E94\u5546\u8BA2\u5355"
+	            );
+	        }
+	    }]);
+
+	    return MyOrder;
+	}(_react2.default.Component);
+
+/***/ },
+/* 750 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _dispatcher = __webpack_require__(237);
+
+	var _dispatcher2 = _interopRequireDefault(_dispatcher);
+
+	var _Model = __webpack_require__(290);
+
+	var _Model2 = _interopRequireDefault(_Model);
+
+	var _Store = __webpack_require__(292);
+
+	var _Store2 = _interopRequireDefault(_Store);
+
+	var _UserStore = __webpack_require__(240);
+
+	var _UserStore2 = _interopRequireDefault(_UserStore);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Model = function (_BaseModel) {
+	    _inherits(Model, _BaseModel);
+
+	    function Model() {
+	        _classCallCheck(this, Model);
+
+	        return _possibleConstructorReturn(this, (Model.__proto__ || Object.getPrototypeOf(Model)).apply(this, arguments));
+	    }
+
+	    return Model;
+	}(_Model2.default);
+
+	var Store = function (_BaseStore) {
+	    _inherits(Store, _BaseStore);
+
+	    function Store() {
+	        _classCallCheck(this, Store);
+
+	        return _possibleConstructorReturn(this, (Store.__proto__ || Object.getPrototypeOf(Store)).apply(this, arguments));
+	    }
+
+	    _createClass(Store, [{
+	        key: "isHK",
+	        value: function isHK() {
+	            return !!this.filter({ category: "hk" }).length;
+	        }
+	    }]);
+
+	    return Store;
+	}(_Store2.default);
+
+	var ProviderStore = new Store(Model);
+	exports.default = ProviderStore;
+
+
+	_UserStore2.default.on("login", function () {
+	    return _UserStore2.default.send({ action: "provider.get" });
+	});
+
+	_dispatcher2.default.Reg({
+	    provider: function provider(_ref) {
+	        var _provider = _ref.provider;
+
+	        ProviderStore.set(_provider);
+	    }
+	}, "provider");
 
 /***/ }
 ]);

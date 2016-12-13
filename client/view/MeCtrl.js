@@ -27,11 +27,17 @@ import Page from "./components/Page"
 import GIcon from "../img/icon_nav_grid.png"
 
 export default class View extends React.Component{
-    grids = [{
-        icon: <img src={GIcon}/>,
-        label: '我的订单',
-        href: '#/order'
-    }]
+    grids = [
+        {
+            icon: <img src={GIcon}/>,
+            label: '我的订单',
+            href: '#/order'
+        },{
+            icon: <img src={GIcon}/>,
+            label: '供应商信息',
+            href: '#/provider'
+        },
+    ]
     state = {
         ... UserStore.me.data
     }

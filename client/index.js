@@ -20,6 +20,7 @@ import OrderCtrl from "./view/OrderCtrl"
 import PartnerCtrl from "./view/PartnerCtrl"
 import ProductCtrl from "./view/ProductCtrl"
 import MyInfoCtrl from "./view/MyInfoCtrl"
+import ProviderCtrl from "./view/ProviderCtrl"
 
 
 import "./app.less";
@@ -121,6 +122,7 @@ ReactDOM.render(
             <Route path="/order" component={OrderCtrl}/>
             <Route path="/partner" component={PartnerCtrl}/>
             <Route path="/myinfo" component={MyInfoCtrl}/>
+            <Route path="/provider" component={ProviderCtrl}/>
         </Route>
 
     </Router>

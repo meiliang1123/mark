@@ -37,7 +37,7 @@ class Store extends BaseStore
 var ProductStore = new Store(Model);
 export default ProductStore;
 
-
+UserStore.on("login",()=>{UserStore.send({action:"product.get"})})
 
 
 
