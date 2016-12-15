@@ -30,9 +30,9 @@ webpackJsonp([0],[
 
 	var _IndexCtrl2 = _interopRequireDefault(_IndexCtrl);
 
-	var _InvolveCtrl = __webpack_require__(432);
+	var _PartnerInvolve = __webpack_require__(751);
 
-	var _InvolveCtrl2 = _interopRequireDefault(_InvolveCtrl);
+	var _PartnerInvolve2 = _interopRequireDefault(_PartnerInvolve);
 
 	var _LoginCtrl = __webpack_require__(434);
 
@@ -61,6 +61,10 @@ webpackJsonp([0],[
 	var _ProviderCtrl = __webpack_require__(749);
 
 	var _ProviderCtrl2 = _interopRequireDefault(_ProviderCtrl);
+
+	var _PartnerMine = __webpack_require__(752);
+
+	var _PartnerMine2 = _interopRequireDefault(_PartnerMine);
 
 	__webpack_require__(442);
 
@@ -166,12 +170,12 @@ webpackJsonp([0],[
 	                            label: "\u9996\u9875"
 	                        }),
 	                        _react2.default.createElement(_lib.TabBarItem, {
-	                            active: this.state.tab == "involve",
+	                            active: this.state.tab == "partner",
 	                            onClick: function onClick(e) {
-	                                return _this2.tab({ tab: "involve" });
+	                                return _this2.tab({ tab: "partner" });
 	                            },
 	                            icon: _react2.default.createElement("img", { src: _icon_nav_yes2.default }),
-	                            label: "\u52A0\u5165\u6211\u4EEC"
+	                            label: "\u5408\u4F19\u4EBA"
 	                        }),
 	                        _react2.default.createElement(_lib.TabBarItem, {
 	                            active: this.state.tab == "me",
@@ -202,11 +206,15 @@ webpackJsonp([0],[
 	        { path: "/", component: Transitor },
 	        _react2.default.createElement(_reactRouter.IndexRoute, { component: _IndexCtrl2.default }),
 	        _react2.default.createElement(_reactRouter.Route, { path: "/index", component: _IndexCtrl2.default }),
-	        _react2.default.createElement(_reactRouter.Route, { path: "/product(/:id)", component: _ProductCtrl2.default }),
-	        _react2.default.createElement(_reactRouter.Route, { path: "/involve", component: _InvolveCtrl2.default }),
+	        _react2.default.createElement(_reactRouter.Route, { path: "/product/:id", component: _ProductCtrl2.default }),
 	        _react2.default.createElement(_reactRouter.Route, { path: "/me", component: _MeCtrl2.default }),
 	        _react2.default.createElement(_reactRouter.Route, { path: "/order", component: _OrderCtrl2.default }),
-	        _react2.default.createElement(_reactRouter.Route, { path: "/partner", component: _PartnerCtrl2.default }),
+	        _react2.default.createElement(
+	            _reactRouter.Route,
+	            { path: "/partner", component: _PartnerCtrl2.default },
+	            _react2.default.createElement(_reactRouter.Route, { path: "mine", component: _PartnerMine2.default }),
+	            _react2.default.createElement(_reactRouter.Route, { path: "involve", component: _PartnerInvolve2.default })
+	        ),
 	        _react2.default.createElement(_reactRouter.Route, { path: "/myinfo", component: _MyInfoCtrl2.default }),
 	        _react2.default.createElement(_reactRouter.Route, { path: "/provider", component: _ProviderCtrl2.default })
 	    )
@@ -1348,7 +1356,7 @@ webpackJsonp([0],[
 
 	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = View.__proto__ || Object.getPrototypeOf(View)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
 	            "products": Object.values(_ProductStore2.default.get()),
-	            "saler": _UserStore2.default.saler()
+	            "saler": _UserStore2.default.saler
 	        }, _temp), _possibleConstructorReturn(_this, _ret);
 	    }
 
@@ -1359,8 +1367,8 @@ webpackJsonp([0],[
 
 	            document.title = "markme· 心生MALL";
 	            _UserStore2.default.send({ action: 'product.get' });
-	            _UserStore2.default.saler().on("change", function (arg) {
-	                return _this2.setState({ saler: _UserStore2.default.saler() });
+	            _UserStore2.default.saler.on("change", function (arg) {
+	                return _this2.setState({ saler: _UserStore2.default.saler });
 	            });
 	            _ProductStore2.default.on("change", function () {
 	                _this2.setState({ "products": Object.values(_ProductStore2.default.get()) });
@@ -1877,10 +1885,16 @@ webpackJsonp([0],[
 	    function User() {
 	        _classCallCheck(this, User);
 
-	        return _possibleConstructorReturn(this, (User.__proto__ || Object.getPrototypeOf(User)).call(this, Model, 'openid'));
+	        return _possibleConstructorReturn(this, (User.__proto__ || Object.getPrototypeOf(User)).call(this, Model, 'uid'));
 	    }
 
 	    _createClass(User, [{
+	        key: "refresh",
+	        value: function refresh(model) {
+	            var uid = model.uid;
+	            UserStore.send({ action: 'user.get', uid: uid });
+	        }
+	    }, {
 	        key: "getAddress",
 	        value: function getAddress() {
 	            var _UserStore$me$data = UserStore.me.data,
@@ -1908,11 +1922,10 @@ webpackJsonp([0],[
 	            UserStore.send(_extends({ action: "user.login" }, info));
 	        }
 	    }, {
-	        key: "saler",
-	        value: function saler() {
-	            var openid = localStorage.saler;
-	            if (!openid) openid = "ou0vGvuFAdFHiWiaS2TybHkGP8QA";
-	            return this.instance(openid);
+	        key: "saveInfo",
+	        value: function saveInfo(data) {
+	            UserStore.me.set(data);
+	            UserStore.send({ action: "user.update", userinfo: data });
 	        }
 	    }, {
 	        key: "triggerAddress",
@@ -1930,8 +1943,15 @@ webpackJsonp([0],[
 	    }, {
 	        key: "me",
 	        get: function get() {
-	            var openid = localStorage.openid;
-	            return UserStore.instance({ openid: openid });
+	            var uid = localStorage.uid;
+	            return UserStore.instance(uid);
+	        }
+	    }, {
+	        key: "saler",
+	        get: function get() {
+	            var uid = localStorage.saler;
+	            if (!uid) uid = 10000006;
+	            return this.instance(uid);
 	        }
 	    }]);
 
@@ -1957,6 +1977,7 @@ webpackJsonp([0],[
 	        var userinfo = _ref.userinfo;
 
 	        localStorage.setItem("openid", userinfo.openid);
+	        localStorage.setItem("uid", userinfo.uid);
 	        UserStore.set(userinfo);
 	        UserStore.emit("login");
 	        var url = window.location.origin + window.location.pathname + window.location.search;
@@ -1967,11 +1988,8 @@ webpackJsonp([0],[
 	            saler = _Util$getQuery.saler;
 
 	        if (saler) {
-	            localStorage.saler = saler;
 	            UserStore.send({ action: "user.update", saler: saler });
 	        }
-
-	        UserStore.send({ action: "user.info", openid: UserStore.saler().openid });
 	    },
 	    userinfo: function userinfo(_userinfo) {
 	        if (_userinfo.userinfo) {
@@ -9904,7 +9922,7 @@ webpackJsonp([0],[
 	            } else if (obj instanceof Object) {
 	                id = obj[this.keyProp];
 	            } else {
-	                console.log("model param err,not int or obj");return null;
+	                console.log("model param err,not int or obj", obj);return null;
 	            }
 
 	            if (!this.instances[id]) {
@@ -23358,316 +23376,7 @@ webpackJsonp([0],[
 	}));
 
 /***/ },
-/* 432 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _ProductStore = __webpack_require__(236);
-
-	var _ProductStore2 = _interopRequireDefault(_ProductStore);
-
-	var _UserStore = __webpack_require__(240);
-
-	var _UserStore2 = _interopRequireDefault(_UserStore);
-
-	var _WeixinStore = __webpack_require__(433);
-
-	var _WeixinStore2 = _interopRequireDefault(_WeixinStore);
-
-	var _lib = __webpack_require__(297);
-
-	var _Page = __webpack_require__(295);
-
-	var _Page2 = _interopRequireDefault(_Page);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var View = function (_React$Component) {
-	    _inherits(View, _React$Component);
-
-	    function View(props) {
-	        _classCallCheck(this, View);
-
-	        var _this = _possibleConstructorReturn(this, (View.__proto__ || Object.getPrototypeOf(View)).call(this, props));
-
-	        _this.state = _extends({}, _UserStore2.default.me.data, {
-	            idimg: "/img/idcardSample.jpg",
-	            waiting: false,
-	            showConfirm: false
-	        });
-	        _this.confirm = {
-	            title: "提交确认",
-	            buttons: [{
-	                type: 'default',
-	                label: '取消',
-	                onClick: function onClick() {
-	                    _this.setState({ showConfirm: false });
-	                }
-	            }, {
-	                type: 'primary',
-	                label: '加入我们',
-	                onClick: function onClick() {
-	                    _this.setState({ showConfirm: false });_this.onSubmit();
-	                }
-	            }]
-	        };
-
-	        if (_UserStore2.default.me.data.isSaler) {
-	            props.router.push("/partner");
-	        }
-	        return _this;
-	    }
-
-	    _createClass(View, [{
-	        key: "componentDidMount",
-	        value: function componentDidMount() {
-	            var _this2 = this;
-
-	            _UserStore2.default.me.on("change", function () {
-
-	                if (_UserStore2.default.me.data.isSaler) {
-	                    _this2.props.router.push("/partner");
-	                }
-	                _this2.setState(_extends({}, _UserStore2.default.me.data, { waiting: false }));
-	            });
-	        }
-	    }, {
-	        key: "showImage",
-	        value: function showImage() {
-	            var _this3 = this;
-
-	            _WeixinStore2.default.chooseImage().then(function (idimg) {
-	                _this3.setState({ idimg: idimg });
-	                return _WeixinStore2.default.uploadImage(idimg);
-	            }).then(function (serverid) {
-	                var action = "util.saveID",
-	                    name = "idcard.jpg";
-	                _this3.setState({ waiting: true });
-	                _UserStore2.default.send({ action: action, serverid: serverid, name: name });
-	            });
-	        }
-	    }, {
-	        key: "onSubmit",
-	        value: function onSubmit() {
-	            var isSaler = 1;
-	            _UserStore2.default.send({ action: "user.update", isSaler: isSaler });
-	        }
-	    }, {
-	        key: "render",
-	        value: function render() {
-	            var _this4 = this;
-
-	            return _react2.default.createElement(
-	                _Page2.default,
-	                { title: "\u6210\u4E3A markme\xB7\u5408\u4F19\u4EBA" },
-	                _react2.default.createElement(
-	                    _lib.Toast,
-	                    { icon: "loading", show: this.state.waiting },
-	                    "\u7167\u7247\u5206\u6790\u4E2D..."
-	                ),
-	                _react2.default.createElement(
-	                    _lib.Cells,
-	                    null,
-	                    _react2.default.createElement(
-	                        _lib.Cell,
-	                        null,
-	                        _react2.default.createElement(
-	                            _lib.CellBody,
-	                            null,
-	                            "\u5F88\u9AD8\u5174\u80FD\u5728\u8FD9\u91CC\u8DDF\u4F60\u76F8\u9047\uFF0C\u8BA9markme\u643A\u624B\u4E0E\u4F60\u4E00\u8D77\u521B\u9020\u4E00\u4E2A\u5C5E\u4E8E\u6211\u4EEC\u7684\u672A\u6765\uFF0C\u4F60\u53EA\u9700\u4E0A\u4F20\u4F60\u7684\u8EAB\u4EFD\u6B63\u7167\u7247\u5373\u53EF\u6210\u4E3A ",
-	                            _react2.default.createElement(
-	                                "strong",
-	                                null,
-	                                "markme\xB7 \u5408\u4F19\u4EBA"
-	                            ),
-	                            " \uFF01"
-	                        )
-	                    )
-	                ),
-	                _react2.default.createElement(
-	                    "div",
-	                    { style: { position: 'relative' } },
-	                    _react2.default.createElement("img", { style: { width: "100%", height: "200px" }, src: this.state.idimg }),
-	                    _react2.default.createElement(
-	                        _lib.ButtonArea,
-	                        null,
-	                        _react2.default.createElement(
-	                            _lib.Button,
-	                            { onClick: function onClick() {
-	                                    _this4.showImage();
-	                                } },
-	                            "\u70B9\u51FB\u4E0A\u4F20\u8EAB\u4EFD\u8BC1"
-	                        )
-	                    )
-	                ),
-	                _react2.default.createElement(
-	                    _lib.Form,
-	                    null,
-	                    _react2.default.createElement(
-	                        _lib.FormCell,
-	                        null,
-	                        _react2.default.createElement(
-	                            _lib.CellHeader,
-	                            null,
-	                            _react2.default.createElement(
-	                                _lib.Label,
-	                                null,
-	                                "\u59D3\u540D\uFF1A"
-	                            )
-	                        ),
-	                        _react2.default.createElement(
-	                            _lib.CellBody,
-	                            null,
-	                            _react2.default.createElement(_lib.Input, { value: this.state.name, type: "text", placeholder: "" })
-	                        )
-	                    ),
-	                    _react2.default.createElement(
-	                        _lib.FormCell,
-	                        null,
-	                        _react2.default.createElement(
-	                            _lib.CellHeader,
-	                            null,
-	                            _react2.default.createElement(
-	                                _lib.Label,
-	                                null,
-	                                "\u51FA\u751F\u65E5\u671F\uFF1A"
-	                            )
-	                        ),
-	                        _react2.default.createElement(
-	                            _lib.CellBody,
-	                            null,
-	                            _react2.default.createElement(_lib.Input, { value: this.state.birth, type: "text", placeholder: "" })
-	                        )
-	                    ),
-	                    _react2.default.createElement(
-	                        _lib.FormCell,
-	                        null,
-	                        _react2.default.createElement(
-	                            _lib.CellHeader,
-	                            null,
-	                            _react2.default.createElement(
-	                                _lib.Label,
-	                                null,
-	                                "\u8EAB\u4EFD\u8BC1\u53F7\u7801\uFF1A"
-	                            )
-	                        ),
-	                        _react2.default.createElement(
-	                            _lib.CellBody,
-	                            null,
-	                            _react2.default.createElement(_lib.Input, { value: this.state.id, type: "text", placeholder: "" })
-	                        )
-	                    ),
-	                    _react2.default.createElement(
-	                        _lib.FormCell,
-	                        null,
-	                        _react2.default.createElement(
-	                            _lib.CellHeader,
-	                            null,
-	                            _react2.default.createElement(
-	                                _lib.Label,
-	                                null,
-	                                "\u6027\u522B\uFF1A"
-	                            )
-	                        ),
-	                        _react2.default.createElement(
-	                            _lib.CellBody,
-	                            null,
-	                            _react2.default.createElement(_lib.Input, { value: this.state.sex, type: "text", placeholder: "" })
-	                        )
-	                    ),
-	                    _react2.default.createElement(
-	                        _lib.FormCell,
-	                        null,
-	                        _react2.default.createElement(
-	                            _lib.CellHeader,
-	                            null,
-	                            _react2.default.createElement(
-	                                _lib.Label,
-	                                null,
-	                                "\u5730\u5740\uFF1A"
-	                            )
-	                        ),
-	                        _react2.default.createElement(
-	                            _lib.CellBody,
-	                            null,
-	                            _react2.default.createElement(_lib.Input, { value: this.state.address, type: "text", placeholder: "" })
-	                        )
-	                    )
-	                ),
-	                _react2.default.createElement(
-	                    _lib.Agreement,
-	                    { checked: this.state.checked, onChange: function onChange(_ref) {
-	                            var checked = _ref.target.checked;
-	                            _this4.setState({ checked: checked });
-	                        } },
-	                    "\u786E\u8BA4\u4EE5\u4E0A\u8EAB\u4EFD\u4FE1\u606F\u5C5E\u4E8E\u672C\u4EBA\uFF0C\u4E14\u771F\u5B9E\u6709\u6548\uFF01",
-	                    _react2.default.createElement("br", null),
-	                    "markme \u7531\u5FC3\u800C\u751F\uFF0C\u65E8\u5728\u8D21\u732E\u6211\u4EEC\u81EA\u5DF1\u7684\u529B\u91CF\uFF0C\u4E3A\u6BCF\u4E00\u4F4D\u7528\u6237\u521B\u9020\u4ED6\u4EEC\u7684\u4EF7\u503C\uFF0C\u4ECE\u800C\u6709\u6211\u4EEC\u7684\u6536\u83B7\uFF0C\u6211\u4EEC\u6C38\u8FDC\u628A\u7528\u6237\u7684\u4EF7\u503C\u653E\u5728\u9996\u4F4D\uFF0C \u6210\u4E3A ",
-	                    _react2.default.createElement(
-	                        "strong",
-	                        null,
-	                        "markme\xB7 \u5408\u4F19\u4EBA"
-	                    ),
-	                    " \u610F\u5473\u7740\u60A8\u4E5F\u8BA4\u53EF\u6211\u4EEC\u7684\u4EF7\u503C\u89C2\uFF0C\u5E76\u4E00\u8D77\u884C\u52A8\uFF01"
-	                ),
-	                _react2.default.createElement(
-	                    _lib.ButtonArea,
-	                    null,
-	                    _react2.default.createElement(
-	                        _lib.Button,
-	                        { disabled: !this.state.checked, onClick: function onClick() {
-	                                _this4.setState({ showConfirm: true });
-	                            } },
-	                        "\u6210\u4E3A ",
-	                        _react2.default.createElement(
-	                            "strong",
-	                            null,
-	                            "markme\xB7 \u5408\u4F19\u4EBA"
-	                        )
-	                    )
-	                ),
-	                _react2.default.createElement(
-	                    _lib.Dialog,
-	                    { title: this.confirm.title, buttons: this.confirm.buttons, show: this.state.showConfirm },
-	                    "\u786E\u8BA4\u60A8\u8BA4\u540C\u6211\u4EEC\u7684\u4EF7\u503C\u89C2",
-	                    _react2.default.createElement("br", null),
-	                    "\u6210\u4E3A ",
-	                    _react2.default.createElement(
-	                        "strong",
-	                        null,
-	                        "markme\xB7 \u5408\u4F19\u4EBA"
-	                    ),
-	                    "\u3002"
-	                )
-	            );
-	        }
-	    }]);
-
-	    return View;
-	}(_react2.default.Component);
-
-	exports.default = View;
-
-/***/ },
+/* 432 */,
 /* 433 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -23998,6 +23707,10 @@ webpackJsonp([0],[
 	            href: '#/order'
 	        }, {
 	            icon: _react2.default.createElement("img", { src: _icon_nav_grid2.default }),
+	            label: '我的合伙人',
+	            href: '#/partner'
+	        }, {
+	            icon: _react2.default.createElement("img", { src: _icon_nav_grid2.default }),
 	            label: '供应商信息',
 	            href: '#/provider'
 	        }], _this.state = _extends({}, _UserStore2.default.me.data), _temp), _possibleConstructorReturn(_this, _ret);
@@ -24255,6 +23968,16 @@ webpackJsonp([0],[
 
 	var _UserStore2 = _interopRequireDefault(_UserStore);
 
+	var _WeixinStore = __webpack_require__(433);
+
+	var _WeixinStore2 = _interopRequireDefault(_WeixinStore);
+
+	var _lib = __webpack_require__(297);
+
+	var _Page = __webpack_require__(295);
+
+	var _Page2 = _interopRequireDefault(_Page);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -24266,20 +23989,43 @@ webpackJsonp([0],[
 	var View = function (_React$Component) {
 	    _inherits(View, _React$Component);
 
-	    function View(props) {
+	    function View() {
 	        _classCallCheck(this, View);
 
-	        var _this = _possibleConstructorReturn(this, (View.__proto__ || Object.getPrototypeOf(View)).call(this, props));
-
-	        _this.state = { "data": {} };
-	        return _this;
+	        return _possibleConstructorReturn(this, (View.__proto__ || Object.getPrototypeOf(View)).apply(this, arguments));
 	    }
 
 	    _createClass(View, [{
 	        key: "render",
 	        value: function render() {
+	            console.log(this.props);
 	            return _react2.default.createElement(
-	                "section",
+	                _Page2.default,
+	                { title: "markme\xB7 \u5408\u4F19\u4EBA" },
+	                this.props.children || _react2.default.createElement(PartnerIndex, null)
+	            );
+	        }
+	    }]);
+
+	    return View;
+	}(_react2.default.Component);
+
+	exports.default = View;
+
+	var PartnerIndex = function (_React$Component2) {
+	    _inherits(PartnerIndex, _React$Component2);
+
+	    function PartnerIndex() {
+	        _classCallCheck(this, PartnerIndex);
+
+	        return _possibleConstructorReturn(this, (PartnerIndex.__proto__ || Object.getPrototypeOf(PartnerIndex)).apply(this, arguments));
+	    }
+
+	    _createClass(PartnerIndex, [{
+	        key: "render",
+	        value: function render() {
+	            return _react2.default.createElement(
+	                "div",
 	                null,
 	                _react2.default.createElement(
 	                    "h2",
@@ -24315,10 +24061,8 @@ webpackJsonp([0],[
 	        }
 	    }]);
 
-	    return View;
+	    return PartnerIndex;
 	}(_react2.default.Component);
-
-	exports.default = View;
 
 /***/ },
 /* 439 */
@@ -24415,7 +24159,9 @@ webpackJsonp([0],[
 	                onBuy: function onBuy() {
 	                    return _ProductStore2.default.easyPay(_this3.model.id);
 	                },
-	                onPreview: _WeixinStore2.default.previewImage,
+	                onPreview: function onPreview(current, urls) {
+	                    _WeixinStore2.default.previewImage(pic4share(current), urls.map(pic4share));
+	                },
 	                data: this.state.data
 	            });
 	        }
@@ -24425,6 +24171,14 @@ webpackJsonp([0],[
 	}(_react2.default.Component);
 
 	exports.default = View;
+
+
+	function pic4share(url) {
+	    var uid = _UserStore2.default.me.uid;
+	    var url = "http:wx.markmeonline.com/share/" + uid + "/" + url.split(".com/")[1];
+
+	    return url;
+	}
 
 /***/ },
 /* 440 */
@@ -24447,6 +24201,8 @@ webpackJsonp([0],[
 	var _lib2 = _interopRequireDefault(_lib);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
 
@@ -24501,6 +24257,7 @@ webpackJsonp([0],[
 	                return doms;
 	            }
 	            var pics = filter(props);
+
 	            return _react2.default.createElement(
 	                _lib2.default.Article,
 	                { className: "product" },
@@ -24538,7 +24295,7 @@ webpackJsonp([0],[
 	                    { className: "pics" },
 	                    pics.map(function (url, id) {
 	                        return _react2.default.createElement("img", { key: id, onClick: function onClick() {
-	                                return _this3.props.onPreview(url, pics);
+	                                return _this3.props.onPreview(url, [piccover].concat(_toConsumableArray(pics)));
 	                            }, src: url });
 	                    })
 	                )
@@ -26032,6 +25789,477 @@ webpackJsonp([0],[
 	        ProviderStore.set(_provider);
 	    }
 	}, "provider");
+
+/***/ },
+/* 751 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _ProductStore = __webpack_require__(236);
+
+	var _ProductStore2 = _interopRequireDefault(_ProductStore);
+
+	var _UserStore = __webpack_require__(240);
+
+	var _UserStore2 = _interopRequireDefault(_UserStore);
+
+	var _WeixinStore = __webpack_require__(433);
+
+	var _WeixinStore2 = _interopRequireDefault(_WeixinStore);
+
+	var _lib = __webpack_require__(297);
+
+	var _Page = __webpack_require__(295);
+
+	var _Page2 = _interopRequireDefault(_Page);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var View = function (_React$Component) {
+	    _inherits(View, _React$Component);
+
+	    function View(props) {
+	        _classCallCheck(this, View);
+
+	        var _this = _possibleConstructorReturn(this, (View.__proto__ || Object.getPrototypeOf(View)).call(this, props));
+
+	        _this.state = _extends({}, _UserStore2.default.me.data, {
+	            idimg: "/img/idcardSample.jpg",
+	            waiting: false,
+	            showConfirm: false
+	        });
+	        _this.confirm = {
+	            title: "提交确认",
+	            buttons: [{
+	                type: 'default',
+	                label: '取消',
+	                onClick: function onClick() {
+	                    _this.setState({ showConfirm: false });
+	                }
+	            }, {
+	                type: 'primary',
+	                label: '加入我们',
+	                onClick: function onClick() {
+	                    _this.setState({ showConfirm: false });_this.onSubmit();
+	                }
+	            }]
+	        };
+
+	        if (_UserStore2.default.me.data.isSaler) {
+	            props.router.push("/partner");
+	        }
+	        return _this;
+	    }
+
+	    _createClass(View, [{
+	        key: "componentDidMount",
+	        value: function componentDidMount() {
+	            var _this2 = this;
+
+	            _UserStore2.default.me.on("change", function () {
+
+	                if (_UserStore2.default.me.data.isSaler) {
+	                    _this2.props.router.push("/partner");
+	                }
+	                _this2.setState(_extends({}, _UserStore2.default.me.data, { waiting: false }));
+	            });
+	        }
+	    }, {
+	        key: "showImage",
+	        value: function showImage() {
+	            var _this3 = this;
+
+	            _WeixinStore2.default.chooseImage().then(function (idimg) {
+	                _this3.setState({ idimg: idimg });
+	                return _WeixinStore2.default.uploadImage(idimg);
+	            }).then(function (serverid) {
+	                var action = "util.saveID",
+	                    name = "idcard.jpg";
+	                _this3.setState({ waiting: true });
+	                _UserStore2.default.send({ action: action, serverid: serverid, name: name });
+	            });
+	        }
+	    }, {
+	        key: "onSubmit",
+	        value: function onSubmit() {
+	            var isSaler = 1;
+	            _UserStore2.default.send({ action: "user.update", isSaler: isSaler });
+	        }
+	    }, {
+	        key: "render",
+	        value: function render() {
+	            var _this4 = this;
+
+	            return _react2.default.createElement(
+	                _Page2.default,
+	                { title: "\u6210\u4E3A markme\xB7\u5408\u4F19\u4EBA" },
+	                _react2.default.createElement(
+	                    _lib.Toast,
+	                    { icon: "loading", show: this.state.waiting },
+	                    "\u7167\u7247\u5206\u6790\u4E2D..."
+	                ),
+	                _react2.default.createElement(
+	                    _lib.Cells,
+	                    null,
+	                    _react2.default.createElement(
+	                        _lib.Cell,
+	                        null,
+	                        _react2.default.createElement(
+	                            _lib.CellBody,
+	                            null,
+	                            "\u5F88\u9AD8\u5174\u80FD\u5728\u8FD9\u91CC\u8DDF\u4F60\u76F8\u9047\uFF0C\u8BA9markme\u643A\u624B\u4E0E\u4F60\u4E00\u8D77\u521B\u9020\u4E00\u4E2A\u5C5E\u4E8E\u6211\u4EEC\u7684\u672A\u6765\uFF0C\u4F60\u53EA\u9700\u4E0A\u4F20\u4F60\u7684\u8EAB\u4EFD\u6B63\u7167\u7247\u5373\u53EF\u6210\u4E3A ",
+	                            _react2.default.createElement(
+	                                "strong",
+	                                null,
+	                                "markme\xB7 \u5408\u4F19\u4EBA"
+	                            ),
+	                            " \uFF01"
+	                        )
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    "div",
+	                    { style: { position: 'relative' } },
+	                    _react2.default.createElement("img", { style: { width: "100%", height: "200px" }, src: this.state.idimg }),
+	                    _react2.default.createElement(
+	                        _lib.ButtonArea,
+	                        null,
+	                        _react2.default.createElement(
+	                            _lib.Button,
+	                            { onClick: function onClick() {
+	                                    _this4.showImage();
+	                                } },
+	                            "\u70B9\u51FB\u4E0A\u4F20\u8EAB\u4EFD\u8BC1"
+	                        )
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    _lib.Form,
+	                    null,
+	                    _react2.default.createElement(
+	                        _lib.FormCell,
+	                        null,
+	                        _react2.default.createElement(
+	                            _lib.CellHeader,
+	                            null,
+	                            _react2.default.createElement(
+	                                _lib.Label,
+	                                null,
+	                                "\u59D3\u540D\uFF1A"
+	                            )
+	                        ),
+	                        _react2.default.createElement(
+	                            _lib.CellBody,
+	                            null,
+	                            _react2.default.createElement(_lib.Input, { value: this.state.name, type: "text", placeholder: "" })
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        _lib.FormCell,
+	                        null,
+	                        _react2.default.createElement(
+	                            _lib.CellHeader,
+	                            null,
+	                            _react2.default.createElement(
+	                                _lib.Label,
+	                                null,
+	                                "\u51FA\u751F\u65E5\u671F\uFF1A"
+	                            )
+	                        ),
+	                        _react2.default.createElement(
+	                            _lib.CellBody,
+	                            null,
+	                            _react2.default.createElement(_lib.Input, { value: this.state.birth, type: "text", placeholder: "" })
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        _lib.FormCell,
+	                        null,
+	                        _react2.default.createElement(
+	                            _lib.CellHeader,
+	                            null,
+	                            _react2.default.createElement(
+	                                _lib.Label,
+	                                null,
+	                                "\u8EAB\u4EFD\u8BC1\u53F7\u7801\uFF1A"
+	                            )
+	                        ),
+	                        _react2.default.createElement(
+	                            _lib.CellBody,
+	                            null,
+	                            _react2.default.createElement(_lib.Input, { value: this.state.id, type: "text", placeholder: "" })
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        _lib.FormCell,
+	                        null,
+	                        _react2.default.createElement(
+	                            _lib.CellHeader,
+	                            null,
+	                            _react2.default.createElement(
+	                                _lib.Label,
+	                                null,
+	                                "\u6027\u522B\uFF1A"
+	                            )
+	                        ),
+	                        _react2.default.createElement(
+	                            _lib.CellBody,
+	                            null,
+	                            _react2.default.createElement(_lib.Input, { value: this.state.sex, type: "text", placeholder: "" })
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        _lib.FormCell,
+	                        null,
+	                        _react2.default.createElement(
+	                            _lib.CellHeader,
+	                            null,
+	                            _react2.default.createElement(
+	                                _lib.Label,
+	                                null,
+	                                "\u5730\u5740\uFF1A"
+	                            )
+	                        ),
+	                        _react2.default.createElement(
+	                            _lib.CellBody,
+	                            null,
+	                            _react2.default.createElement(_lib.Input, { value: this.state.address, type: "text", placeholder: "" })
+	                        )
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    _lib.Agreement,
+	                    { checked: this.state.checked, onChange: function onChange(_ref) {
+	                            var checked = _ref.target.checked;
+	                            _this4.setState({ checked: checked });
+	                        } },
+	                    "\u786E\u8BA4\u4EE5\u4E0A\u8EAB\u4EFD\u4FE1\u606F\u5C5E\u4E8E\u672C\u4EBA\uFF0C\u4E14\u771F\u5B9E\u6709\u6548\uFF01",
+	                    _react2.default.createElement("br", null),
+	                    "markme \u7531\u5FC3\u800C\u751F\uFF0C\u65E8\u5728\u8D21\u732E\u6211\u4EEC\u81EA\u5DF1\u7684\u529B\u91CF\uFF0C\u4E3A\u6BCF\u4E00\u4F4D\u7528\u6237\u521B\u9020\u4ED6\u4EEC\u7684\u4EF7\u503C\uFF0C\u4ECE\u800C\u6709\u6211\u4EEC\u7684\u6536\u83B7\uFF0C\u6211\u4EEC\u6C38\u8FDC\u628A\u7528\u6237\u7684\u4EF7\u503C\u653E\u5728\u9996\u4F4D\uFF0C \u6210\u4E3A ",
+	                    _react2.default.createElement(
+	                        "strong",
+	                        null,
+	                        "markme\xB7 \u5408\u4F19\u4EBA"
+	                    ),
+	                    " \u610F\u5473\u7740\u60A8\u4E5F\u8BA4\u53EF\u6211\u4EEC\u7684\u4EF7\u503C\u89C2\uFF0C\u5E76\u4E00\u8D77\u884C\u52A8\uFF01"
+	                ),
+	                _react2.default.createElement(
+	                    _lib.ButtonArea,
+	                    null,
+	                    _react2.default.createElement(
+	                        _lib.Button,
+	                        { disabled: !this.state.checked, onClick: function onClick() {
+	                                _this4.setState({ showConfirm: true });
+	                            } },
+	                        "\u6210\u4E3A ",
+	                        _react2.default.createElement(
+	                            "strong",
+	                            null,
+	                            "markme\xB7 \u5408\u4F19\u4EBA"
+	                        )
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    _lib.Dialog,
+	                    { title: this.confirm.title, buttons: this.confirm.buttons, show: this.state.showConfirm },
+	                    "\u786E\u8BA4\u60A8\u8BA4\u540C\u6211\u4EEC\u7684\u4EF7\u503C\u89C2",
+	                    _react2.default.createElement("br", null),
+	                    "\u6210\u4E3A ",
+	                    _react2.default.createElement(
+	                        "strong",
+	                        null,
+	                        "markme\xB7 \u5408\u4F19\u4EBA"
+	                    ),
+	                    "\u3002"
+	                )
+	            );
+	        }
+	    }]);
+
+	    return View;
+	}(_react2.default.Component);
+
+	exports.default = View;
+
+/***/ },
+/* 752 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _ProductStore = __webpack_require__(236);
+
+	var _ProductStore2 = _interopRequireDefault(_ProductStore);
+
+	var _UserStore = __webpack_require__(240);
+
+	var _UserStore2 = _interopRequireDefault(_UserStore);
+
+	var _WeixinStore = __webpack_require__(433);
+
+	var _WeixinStore2 = _interopRequireDefault(_WeixinStore);
+
+	var _lib = __webpack_require__(297);
+
+	var _Page = __webpack_require__(295);
+
+	var _Page2 = _interopRequireDefault(_Page);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var View = function (_React$Component) {
+	    _inherits(View, _React$Component);
+
+	    function View() {
+	        var _ref;
+
+	        var _temp, _this, _ret;
+
+	        _classCallCheck(this, View);
+
+	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	            args[_key] = arguments[_key];
+	        }
+
+	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = View.__proto__ || Object.getPrototypeOf(View)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
+	            saler: _UserStore2.default.saler,
+	            trust: _UserStore2.default.me.trust
+	        }, _temp), _possibleConstructorReturn(_this, _ret);
+	    }
+
+	    _createClass(View, [{
+	        key: "componentDidMount",
+	        value: function componentDidMount() {
+	            var _this2 = this;
+
+	            _UserStore2.default.saler.on("change", function () {
+	                _this2.setState({ saler: _UserStore2.default.saler });
+	            });
+	            _UserStore2.default.me.on("change", function () {
+	                _this2.setState({ trust: _UserStore2.default.me.trust });
+	            });
+	        }
+	    }, {
+	        key: "render",
+	        value: function render() {
+	            return _react2.default.createElement(
+	                "div",
+	                null,
+	                _react2.default.createElement(
+	                    _lib.Panel,
+	                    null,
+	                    _react2.default.createElement(
+	                        _lib.PanelHeader,
+	                        null,
+	                        "\u6211\u7684 ",
+	                        _react2.default.createElement(
+	                            "strong",
+	                            null,
+	                            "markme\xB7 \u5408\u4F19\u4EBA"
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        _lib.PanelBody,
+	                        null,
+	                        _react2.default.createElement(
+	                            _lib.MediaBox,
+	                            { type: "appmsg", href: "javascript:void(0);" },
+	                            _react2.default.createElement(
+	                                _lib.MediaBoxHeader,
+	                                null,
+	                                _react2.default.createElement("img", { src: this.state.saler.headimgurl })
+	                            ),
+	                            _react2.default.createElement(
+	                                _lib.MediaBoxBody,
+	                                null,
+	                                _react2.default.createElement(
+	                                    _lib.MediaBoxTitle,
+	                                    null,
+	                                    this.state.saler.nickname
+	                                ),
+	                                _react2.default.createElement(
+	                                    _lib.MediaBoxDescription,
+	                                    null,
+	                                    this.state.saler.telNumber
+	                                )
+	                            )
+	                        )
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    _lib.Form,
+	                    null,
+	                    _react2.default.createElement(
+	                        _lib.FormCell,
+	                        { "switch": true },
+	                        _react2.default.createElement(
+	                            _lib.CellBody,
+	                            null,
+	                            "\u662F\u5426\u4FE1\u4EFB"
+	                        ),
+	                        _react2.default.createElement(
+	                            _lib.CellFooter,
+	                            null,
+	                            _react2.default.createElement(_lib.Switch, { checked: this.state.trust, onChange: function onChange(event) {
+	                                    _UserStore2.default.saveInfo({ trust: Number(event.target.checked) });
+	                                } })
+	                        )
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    _lib.CellsTips,
+	                    null,
+	                    "\u5982\u679C\u4FE1\u4EFB\u60A8\u7684",
+	                    _react2.default.createElement(
+	                        "strong",
+	                        null,
+	                        "markme\xB7 \u5408\u4F19\u4EBA"
+	                    ),
+	                    " \u5728\u60A8\u8D2D\u4E70\u4E86\u6709\u4ED6\u63D0\u4F9B\u9500\u552E\u548C\u53D1\u8D27\u670D\u52A1\u7684\u5546\u54C1\u662F\uFF0C\u6B3E\u9879\u4F1A\u5728\u60A8\u4ED8\u6B3E\u540E\u7ACB\u5373\u8F6C\u5165\u5BF9\u65B9\u8D26\u6237\uFF0Cmarkme\u4E0D\u63D0\u4F9B\u62C5\u4FDD\u670D\u52A1"
+	                )
+	            );
+	        }
+	    }]);
+
+	    return View;
+	}(_react2.default.Component);
+
+	exports.default = View;
 
 /***/ }
 ]);
