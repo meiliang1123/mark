@@ -31,6 +31,7 @@ export default class View extends React.Component{
             return doms;
         }
         var pics = filter(props);
+
         return (
             <w.Article className="product">
                 <Cover src={piccover}></Cover>
@@ -46,7 +47,7 @@ export default class View extends React.Component{
 
                 </w.Cell></w.Cells>
                 <section className="pics">
-                    {pics.map((url, id)=><img key={id} onClick={()=>this.props.onPreview(url, pics)} src={url} />)}
+                    {pics.map((url, id)=><img key={id} onClick={()=>this.props.onPreview(url, [piccover, ...pics] )} src={url} />)}
                 </section>
 
 

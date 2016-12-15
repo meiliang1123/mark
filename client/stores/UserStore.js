@@ -26,7 +26,12 @@ class Model extends BaseModel {
 
 class User extends BaseStore {
     constructor(){
-        super(Model, 'openid');
+        super(Model, 'uid');
+    }
+    refresh(model){
+        var uid= model.uid;
+        UserStore.send({action:'user.get', uid});
+
     }
 
     getAddress (){
@@ -43,14 +48,19 @@ class User extends BaseStore {
         UserStore.send({action:"user.login", ...info});
     }
     get me(){
-        var openid = localStorage.openid;
-        return UserStore.instance({openid})
+        var uid = localStorage.uid;
+        return UserStore.instance(uid)
     }
-    saler(){
-        var openid = localStorage.saler;
-        if(!openid) openid = "ou0vGvuFAdFHiWiaS2TybHkGP8QA";
-        return this.instance(openid);
+    get saler(){
+        var uid = localStorage.saler;
+        if(!uid) uid = 10000006;
+        return this.instance(uid);
     }
+    saveInfo(data){
+        UserStore.me.set(data);
+        UserStore.send({action:"user.update", userinfo:data})
+    }
+
     triggerAddress(force = false){
 
         if(!this.getAddress().detailInfo || force){
@@ -82,18 +92,17 @@ var actions = {
     },
     loginSucc({userinfo}){
         localStorage.setItem("openid", userinfo.openid);
+        localStorage.setItem("uid", userinfo.uid);
         UserStore.set(userinfo);
         UserStore.emit("login");
         var url = window.location.origin + window.location.pathname +  window.location.search;
         UserStore.send({action:'util.jsParam',client_url: url})
         var {code, saler} = Util.getQuery();
         if(saler){
-            localStorage.saler = saler;
             UserStore.send({action:"user.update", saler})
 
         }
 
-        UserStore.send({action:"user.info", openid:UserStore.saler().openid});
 
     },
     userinfo(userinfo){

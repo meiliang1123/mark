@@ -1,4 +1,5 @@
 import fs from "fs";
+import path from "path";
 import https from "https";
 import http from "http";
 import Weixin from "../classes/weixin";
@@ -12,6 +13,23 @@ function saveWxImg({openid, serverid, name}){
     fs.existsSync(path) || fs.mkdirSync(path);
     var _dst = `profile/${openid}/${name}`;
     return Weixin.cgi.saveImg(serverid, _dst).then(()=>_dst);
+}
+
+function mkdir(file){
+    var dirname = path.dirname(file);
+    console.log(dirname);
+    try{
+        fs.mkdirSync(dirname);
+    }catch (e){
+
+        if(e.code == "ENOENT"){
+            mkdir(dirname);
+            fs.mkdirSync(dirname);
+        }
+
+    }
+
+
 }
 
 class Action{
@@ -33,9 +51,9 @@ class Action{
         });
     }
 
-    imageWithQR({openid, pic}){
+    imageWithQR({uid, pic}){
 
-        var promise = Mysql().getOne("user",{openid})
+        var promise = Mysql().getOne("user",{uid})
             .then((user)=>{
                 var data = {
                     "expire_seconds": 2592000,
@@ -45,7 +63,7 @@ class Action{
                     }
                 }
                 if(user && user.isSaler){
-                    data.scene.scene_id = (user.uid);
+                    data.action_info.scene.scene_id = (user.uid);
                 }
                 return data;
             })
@@ -70,11 +88,17 @@ class Action{
                 })});
             })
             .then(buf=>{
-                var main = images(pic);
+                var main = images(pic).size(640);
+                var file = `${__dirname}/../../static/share/${uid}/${pic.split("static/")[1]}`;
+                mkdir(path.resolve(file));
+
                 var qrcode = images(Buffer.from(buf,"binary")).size(100,100);
                 var size = main.size();
                 main.draw(qrcode, size.width - 100, size.height - 100 )
-                return main.encode("jpg");
+
+                main.save(file,"jpg",{operation:50} );
+                return main.encode("jpg",{operation:50});
+
             }).catch(e=>{console.log(e)})
 
         return promise;

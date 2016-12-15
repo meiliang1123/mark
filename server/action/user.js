@@ -66,10 +66,10 @@ class Action{
         Mysql().save("user",data);
         socket.send({action:"userinfo", data})
     }
-    info({openid}, socket){
-        Mysql().getOne("user", {openid}).then(({nickname, headimgurl, userName})=>{
+    get({uid}, socket){
+        Mysql().getOne("user", {uid}).then(({nickname, headimgurl, userName})=>{
 
-            socket.send({action:"userinfo", userinfo:{nickname,openid, headimgurl,userName}});
+            socket.send({action:"userinfo", userinfo:{nickname,uid, headimgurl,userName}});
         });
     }
     getJSParam(data, socket){

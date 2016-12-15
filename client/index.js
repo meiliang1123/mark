@@ -13,7 +13,7 @@ import FastClick from "fastclick";
 //import {IndexCtrl,LoginCtrl,InvolveCtrl,MeCtrl,OrderCtrl,PartnerCtrl,ProductCtrl} from "./view/index"
 
 import IndexCtrl from "./view/IndexCtrl"
-import InvolveCtrl from "./view/InvolveCtrl"
+import PartnerInvolve from "./view/PartnerInvolve"
 import LoginCtrl from "./view/LoginCtrl"
 import MeCtrl from "./view/MeCtrl";
 import OrderCtrl from "./view/OrderCtrl"
@@ -21,6 +21,8 @@ import PartnerCtrl from "./view/PartnerCtrl"
 import ProductCtrl from "./view/ProductCtrl"
 import MyInfoCtrl from "./view/MyInfoCtrl"
 import ProviderCtrl from "./view/ProviderCtrl"
+import PartnerMine from "./view/PartnerMine"
+
 
 
 import "./app.less";
@@ -87,10 +89,10 @@ class Transitor extends React.Component {
                     />
 
                     <TabBarItem
-                        active={this.state.tab == "involve"}
-                        onClick={e=>this.tab({tab:"involve"})}
+                        active={this.state.tab == "partner"}
+                        onClick={e=>this.tab({tab:"partner"})}
                         icon={<img src={IconYes}/>}
-                        label="加入我们"
+                        label="合伙人"
                     />
                     <TabBarItem
                         active={this.state.tab == "me"}
@@ -116,11 +118,16 @@ ReactDOM.render(
         <Route path="/" component={Transitor}>
             <IndexRoute component={IndexCtrl}/>
             <Route  path="/index" component={IndexCtrl}/>
-            <Route path="/product(/:id)" component={ProductCtrl}/>
-            <Route path="/involve" component={InvolveCtrl}/>
-            <Route path="/me" component={MeCtrl}/>
+            <Route path="/product/:id" component={ProductCtrl}/>
+
+            <Route path="/me" component={MeCtrl}>
+
+            </Route>
             <Route path="/order" component={OrderCtrl}/>
-            <Route path="/partner" component={PartnerCtrl}/>
+            <Route path="/partner" component={PartnerCtrl} >
+                <Route path="mine" component={PartnerMine} />
+                <Route path="involve" component={PartnerInvolve}/>
+            </Route>
             <Route path="/myinfo" component={MyInfoCtrl}/>
             <Route path="/provider" component={ProviderCtrl}/>
         </Route>

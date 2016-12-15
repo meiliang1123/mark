@@ -12,13 +12,13 @@ export default class View extends React.Component{
 
     state = {
         "products":Object.values(ProductStore.get()),
-        "saler": UserStore.saler(),
+        "saler": UserStore.saler,
     }
 
     componentDidMount(){
         document.title = "markme· 心生MALL";
         UserStore.send({action:'product.get'});
-        UserStore.saler().on("change",arg=>this.setState({saler:UserStore.saler()}))
+        UserStore.saler.on("change",arg=>this.setState({saler:UserStore.saler}))
         ProductStore.on("change",()=>{this.setState({"products":Object.values(ProductStore.get())})})
     }
 

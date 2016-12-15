@@ -34,6 +34,7 @@ router.get("/img/coop/:uid", function(req, res, next){
     try{
 
         action.default.markmeWithCoop({uid}).then(buf=>{
+
             res.end(buf, "binary");
         })
 
@@ -43,20 +44,20 @@ router.get("/img/coop/:uid", function(req, res, next){
     }
 })
 
-router.get("/share/:uid-:pid-:name", function(req, res, next){
-    var {uid, pid, name} = req.params;
-    res.writeHead('200', {'Content-Type': 'image/jpeg'});
+router.get("/share/:uid/*", function(req, res, next){
+
+    var uid = req.params.uid,
+        pic = req.params[0];
+
+    //res.writeHead('200', {'Content-Type': 'image/jpeg'});
     var action = require("../action/util");
 
-    var  pic = __dirname + `/../../static/product/${pid}/${name}.jpg`;
+    var  pic =  `${__dirname}/../../static/${pic}`;
 
     try{
-        console.log(pic);
         action.default.imageWithQR({uid, pic}).then(buf=>{
             res.end(buf, "binary");
         })
-
-
     }catch (e){
         console.log(e);
     }

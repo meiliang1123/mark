@@ -24,7 +24,7 @@ export default class Store extends EventEmitter{
 
         if(Number.isInteger(obj) || typeof obj == "string"){id = obj; obj = {[this.keyProp]:id};}
         else if(obj instanceof Object) {id = (obj[this.keyProp]);}
-        else {console.log("model param err,not int or obj");return null;}
+        else {console.log("model param err,not int or obj", obj);return null;}
 
         if(!this.instances[id]) {
             this.instances[id] = new this.model(obj);
