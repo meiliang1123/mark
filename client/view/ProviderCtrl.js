@@ -126,7 +126,6 @@ class HK extends React.Component{
         );
         return isHK? yes: no;
     }
-
 }
 
 class MyProduct extends React.Component{

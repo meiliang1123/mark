@@ -29,7 +29,20 @@ import GIcon from "../img/icon_nav_grid.png"
 
 
 export default class View extends React.Component{
+    render(){
 
+        return(
+            <Page>
+                {(this.props.children) || <IndexView {...this.props}></IndexView> }
+
+            </Page>
+        )
+
+    }
+
+}
+
+class IndexView extends React.Component{
     grids = [
         {
             icon: <img src={GIcon}/>,
@@ -38,7 +51,7 @@ export default class View extends React.Component{
         },{
             icon: <img src={GIcon}/>,
             label: '我的合伙人',
-            href: '#/partner'
+            href: '#/me/partner'
         },{
             icon: <img src={GIcon}/>,
             label: '供应商信息',

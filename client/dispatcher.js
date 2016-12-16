@@ -5,7 +5,7 @@ let dispatcher =  new Dispatcher();
 var tokens = {};
 
 dispatcher.Reg = function(actions, token = "default"){
-    if(tokens[token]) dispatcher.unregister(tokens[token]);
+    //if(tokens[token]) dispatcher.unregister(tokens[token]);
     tokens[token] =  dispatcher.register((msg)=>{
         let {type, action, ...data} = msg;
         if(!action) action = type;

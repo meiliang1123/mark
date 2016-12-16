@@ -22,6 +22,17 @@ class Model extends BaseModel {
     }
 }
 
+let loginFlag = false;
+
+function broadcastLogin(resolve){
+    var interval = setInterval(()=>{
+        if(loginFlag) {
+            resolve();
+            clearInterval(interval);
+        }
+
+    }, 100)
+}
 
 
 class User extends BaseStore {
@@ -60,7 +71,7 @@ class User extends BaseStore {
         UserStore.me.set(data);
         UserStore.send({action:"user.update", userinfo:data})
     }
-
+    LoginPromise = new Promise(broadcastLogin)
     triggerAddress(force = false){
 
         if(!this.getAddress().detailInfo || force){
@@ -102,7 +113,7 @@ var actions = {
             UserStore.send({action:"user.update", saler})
 
         }
-
+        loginFlag = true;
 
     },
     userinfo(userinfo){

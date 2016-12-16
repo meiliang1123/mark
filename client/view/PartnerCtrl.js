@@ -2,6 +2,7 @@ import React from "react";
 import ProductStore from "../stores/ProductStore.js";
 import UserStore from "../stores/UserStore.js";
 import WeixinStore from "../stores/WeixinStore"
+
 import {
     version,
 
@@ -24,14 +25,20 @@ import {
     Popup,PopupHeader
 }  from "./react-weui/lib/";
 import Page from "./components/Page"
+import PartnerInvolve from "./PartnerInvolve"
+
+import GIcon from "../img/icon_nav_grid.png"
 
 export default class View extends React.Component{
 
+    componentDidMount(){
+        UserStore.me.on("change", ()=>{this.forceUpdate()})
+    }
     render(){
-        console.log(this.props);
+
         return(
-            <Page title="markme· 合伙人">
-                {(this.props.children) || <PartnerIndex></PartnerIndex>}
+            <Page>
+                {(this.props.children) || (UserStore.me.isSaler !== 0 && <PartnerIndex {...this.props}></PartnerIndex> ) || <PartnerInvolve {...this.props}></PartnerInvolve> }
 
             </Page>
         )
@@ -39,17 +46,51 @@ export default class View extends React.Component{
     }
 }
 
+
 class PartnerIndex extends React.Component{
+
+
+    grids = [
+        {
+            icon: <img src={GIcon}/>,
+            label: '我的客户',
+            href: '#/partner/customer'
+        },{
+            icon: <img src={GIcon}/>,
+            label: '合伙人收入',
+            href: '#/partner/incoming'
+        },{
+            icon: <img src={GIcon}/>,
+            label: '合伙人订单',
+            href: '#/partner/order'
+        }
+        ,{
+            icon: <img src={GIcon}/>,
+            label: '合伙人产品',
+            href: '#/provider/product'
+        },
+    ]
+
+
+
     render(){
-        return (
-            <div>
-                <h2>合伙人首页</h2>
-                <h3>if未成为合伙人的显示成为合伙人流程</h3>
-                <h3>两个模块，代购合作 + 平台合作</h3>
-                <h3>代购合作：显示自己的产品列表，预览自己的首页</h3>
-                <h3>平台合作：显示自己的代售的平台产品</h3>
-                <h3>合作伙伴信息 订单，用户等</h3>
-            </div>
+
+
+
+        return(
+            <Page title="markme·合伙人">
+                <Cells><Cell>
+                    <CellBody>
+                        您店铺的商品中，您有供应商身份的商品下单后都会被指派到您发货，由您为用户完成后续服务，请确保满足用户需求，跟客户保持长久的合作！
+                    </CellBody>
+                </Cell></Cells>
+                <br/>
+                <Grids data={this.grids}>
+
+                </Grids>
+            </Page>
         )
+
     }
 }
+

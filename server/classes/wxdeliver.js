@@ -15,28 +15,43 @@ module.exports = function deliver({xml:data}){
 
 var actions = {
     scan(data){
-        var openid = data.FromUserName[0], eventkey = data.EventKey[0];
-        Mysql().getOne("user",{uid:eventkey})
+        var openid = data.FromUserName[0], saler = data.EventKey[0];
+        if(saler < 100000000){
+            //not a user share action
+            return;
+        }
+
+        Mysql().getOne('user',{openid})
             .then(user=>{
-                var msg = {
-                    "touser":openid,
-                    "msgtype":"news",
-                    "news":{
-                        "articles": [
-                            {
-                                "title":`来自${user.nickname}的邀请`,
-                                "description":`您通过${user.nickname}关注到了我们，请确认选择${user.sex == 2 ? "她" : '他'}为您的《markme· 合伙人》`,
-                                "url":"http://wx.markmeonline.com/#/",
-                                "picurl":`http://wx.markmeonline.com/img/coop/${user.uid}`,
-                            }
-                        ]
-                    }
-                };
-                return msg;
+                if(!user.saler ){
+                    Mysql().save("user", {openid, saler, trust:0})
+
+                    Mysql().getOne("user",{uid:saler})
+                        .then(user=>{
+
+                            var msg = {
+                                "touser":openid,
+                                "msgtype":"news",
+                                "news":{
+                                    "articles": [
+                                        {
+                                            "title":`成功设置 markme· 合伙人`,
+                                            "description":`您成功指定${user.nickname} 为您的《markme· 合伙人》，进入确认您是否信任${user.sex == 2 ? "她" : '他'}`,
+                                            "url":"http://wx.markmeonline.com/#/partner/mine",
+                                            "picurl":`http://wx.markmeonline.com/img/coop/${user.uid}`,
+                                        }
+                                    ]
+                                }
+                            };
+                            return msg;
+                        })
+                        .then(msg=>{
+                            Weixin.cgi.post('/message/custom/send', msg);
+                        })
+                }
             })
-            .then(msg=>{
-                Weixin.cgi.post('/message/custom/send', msg);
-            })
+
+
     },
     subscribe(data){
         var openid = data.FromUserName[0];

@@ -60,16 +60,17 @@ class Action{
         }
 
         if(!_checkLogin(socket)){return;};
+        var uid = socket.user.uid;
         var openid = socket.user.openid;
-        var data = {...userinfo, openid};
+        var data = {...userinfo, uid, openid};
         socket.user.set(data);
         Mysql().save("user",data);
-        socket.send({action:"userinfo", data})
+        socket.send({action:"userinfo", ...data})
     }
     get({uid}, socket){
-        Mysql().getOne("user", {uid}).then(({nickname, headimgurl, userName})=>{
+        Mysql().getOne("user", {uid}).then(({nickname, headimgurl, userName, trust, })=>{
 
-            socket.send({action:"userinfo", userinfo:{nickname,uid, headimgurl,userName}});
+            socket.send({action:"userinfo", nickname,uid, headimgurl,userName, trust});
         });
     }
     getJSParam(data, socket){

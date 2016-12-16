@@ -56,9 +56,9 @@ export default class View extends React.Component{
         }
     }
     componentDidMount(){
-        UserStore.me.on("change",()=>{
 
-            if(UserStore.me.data.isSaler){
+        UserStore.me.on("change",()=>{
+            if(UserStore.me.isSaler){
                 this.props.router.push(`/partner`);
             }
             this.setState({...UserStore.me.data, waiting:false});
@@ -81,7 +81,6 @@ export default class View extends React.Component{
         UserStore.send({action:"user.update", isSaler});
     }
     render(){
-
         return(
             <Page title="成为 markme·合伙人">
                 <Toast icon="loading" show={this.state.waiting}>照片分析中...</Toast>

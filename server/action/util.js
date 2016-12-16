@@ -38,11 +38,12 @@ class Action{
     }
     saveID({serverid}, socket){
         var openid = socket.user.openid;
+        var uid = socket.user.uid;
         var name = "idcard.jpg";
         saveWxImg({openid, serverid, name}).then((file)=>{
             Youtu.idcardocr(file, 0, function(data){
                 let {name, nation, birth, id, address, sex} = data.data;
-                let userinfo = {name, nation, birth, id,address,sex ,  openid};
+                let userinfo = {name, nation, birth, id,address,sex ,  uid, openid};
 
                 name && address
                 && socket.send({action:"userinfo",userinfo})

@@ -10,18 +10,22 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { Router, Route, IndexRoute, hashHistory } from 'react-router';
 import FastClick from "fastclick";
 
-//import {IndexCtrl,LoginCtrl,InvolveCtrl,MeCtrl,OrderCtrl,PartnerCtrl,ProductCtrl} from "./view/index"
+
 
 import IndexCtrl from "./view/IndexCtrl"
-import PartnerInvolve from "./view/PartnerInvolve"
-import LoginCtrl from "./view/LoginCtrl"
+
 import MeCtrl from "./view/MeCtrl";
+import MeInfo from "./view/MeInfo"
+import MePartner from "./view/MePartner"
+
 import OrderCtrl from "./view/OrderCtrl"
 import PartnerCtrl from "./view/PartnerCtrl"
+import PartnerInvolve from "./view/PartnerInvolve"
+import PartnerCustomer from "./view/PartnerCustomer"
+
 import ProductCtrl from "./view/ProductCtrl"
-import MyInfoCtrl from "./view/MyInfoCtrl"
 import ProviderCtrl from "./view/ProviderCtrl"
-import PartnerMine from "./view/PartnerMine"
+
 
 
 
@@ -121,14 +125,15 @@ ReactDOM.render(
             <Route path="/product/:id" component={ProductCtrl}/>
 
             <Route path="/me" component={MeCtrl}>
-
+                <Route path="info" component={MeInfo}/>
+                <Route path="partner" component={MePartner} />
             </Route>
             <Route path="/order" component={OrderCtrl}/>
             <Route path="/partner" component={PartnerCtrl} >
-                <Route path="mine" component={PartnerMine} />
+                <Route path="customer" component={PartnerCustomer}/>
                 <Route path="involve" component={PartnerInvolve}/>
             </Route>
-            <Route path="/myinfo" component={MyInfoCtrl}/>
+
             <Route path="/provider" component={ProviderCtrl}/>
         </Route>
 
