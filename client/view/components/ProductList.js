@@ -38,7 +38,6 @@ export default class View extends Component{
 
     _renderProduct(prod){
 
-
         return(
 
             <MediaBox onClick={()=>this.props.onProduct(prod.id)} key={prod.id} type="appmsg" href="javascript:void(0);">

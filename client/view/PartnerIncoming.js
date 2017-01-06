@@ -25,43 +25,14 @@ import {
 import Page from "./components/Page"
 import BoxList from "./components/BoxList"
 
-class Customer extends React.Component{
-    render(){
-        return (
 
-            <Page>
-                <BoxList ></BoxList>
-            </Page>
-        )
-    }
-}
 
 export default class View extends React.Component{
-    state = {customers:[]}
-    componentDidMount(){
-        UserStore.LoginPromise.then(()=>{
-            MassStore.agent({action:"saler.getCustomer"}, ({customers})=>{
-                this.setState({customers})
-            })
-        })
-        UserStore.on("change", ()=>{this.forceUpdate()})
-    }
     render(){
-        var data = this.state.customers.map(uid=>{
-            var User = UserStore.instance(uid);
-            var id = uid,
-                title = User.nickname,
-                desc = "desc",
-                href = `#/partner/customer/${uid}`,
-                tail = "whatever",
-                img = User.headimgurl;
-            return {id, title, desc, img, tail,href}
-        })
 
-        return this.props.params.uid ? (<Customer uid={this.props.params.uid}></Customer>):(
+        return (
             <Page>
-                <BoxList title="我的客户" data={data}
-                />
+
             </Page>
         )
 

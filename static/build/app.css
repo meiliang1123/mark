@@ -66,6 +66,32 @@ label.weui-agree > * {
 .weui-popup__action:last-child {
   text-align: right;
 }
+.react-weui-ptr {
+  overflow: hidden;
+}
+.react-weui-ptr__loader {
+  pointer-events: none;
+  font-weight: bold;
+  text-align: center;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  align-content: stretch;
+}
+.react-weui-ptr__content {
+  height: 100%;
+  overflow: scroll;
+}
+.react-weui-infiniteloader {
+  overflow: hidden;
+}
+.react-weui-infiniteloader__content {
+  height: 100%;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+  z-index: 1;
+}
 * {
   min-height: 0;
   min-width: 0;
@@ -90,9 +116,6 @@ li {
 }
 .hide {
   display: none;
-}
-.weui-tabbar {
-  position: fixed;
 }
 /*页面转换*/
 .page-enter {
@@ -139,11 +162,11 @@ li {
 }
 /*Page*/
 .page {
-  flex: 1;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
+  position: absolute;
   padding-bottom: 80px;
 }
 .page .title {

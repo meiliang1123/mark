@@ -1,84 +1,55 @@
 import Mysql from "../classes/mysql";
 import Weixin from "../classes/weixin";
-import Model from "../classes/model"
+import User from "./../models/user"
 
-
-
-function _sendUserInfo(socket,openid){
-
-    Mysql().getOne("user", {openid}).then((data)=>{
-        if(data == undefined){
-            socket.send({action:"invalidCode"});
-            return;
-        }
-        var {access_token, refresh_token, ...userinfo} = data;
-        socket.user = new Model(userinfo);
-        socket.send({action:"loginSucc", userinfo})
-    });
-}
-function _checkLogin(socket){
-    if(socket.user && socket.user.openid){
-        return true;
-    } else{
-        socket.send({action:"needLogin"});
-        return false;
-    }
-}
 
 class Action{
     constructor(){
 
     }
-    login(data, socket){
-        let {username, code, openid} = data;
+    async login(data, socket){
+        var {code, openid} = data;
         if(code){
-            Weixin.sns.clienToken({code}).then((data)=>{
-                let {access_token, openid,errcode} = data;
-                if(40029 == errcode) {
-                    socket.send({action:"invalidCode"})
-                    return;
-                }
-                Mysql().save("user", data);
+            var data = await Weixin.sns.clienToken({code})
 
-
-                var path = `/user/info?openid=${openid}&lang=zh_CN`;
-                Weixin.sns.clientUserInfo({access_token,openid}).then((userinfo)=>{
-
-                    Mysql().save("user", userinfo);
-                    _sendUserInfo(socket, openid);
-                })
-            });
-
+            var {access_token, openid,errcode} = data;
+            if(40029 == errcode) {
+                socket.send({action:"invalidCode"})
+                return;
+            }
         }
-        else if(openid){
-            _sendUserInfo(socket, openid);
+        if(openid){
+            var user = await User.getByOpenid(openid);
+            if(access_token){
+                var info = await Weixin.sns.clientUserInfo({access_token,openid})
+                user.save(info);
+            }
+            if(user.id) {
+                socket.user = user;
+                socket.send({action:"loginSucc", userinfo:user.data})
+            }
         }
+
     }
     update(userinfo,socket){
+        if(!socket.checkLogin())return;
+
         if(userinfo.userinfo){
             userinfo = userinfo.userinfo;
         }
-
-        if(!_checkLogin(socket)){return;};
-        var uid = socket.user.uid;
-        var openid = socket.user.openid;
-        var data = {...userinfo, uid, openid};
-        socket.user.set(data);
-        Mysql().save("user",data);
-        socket.send({action:"userinfo", ...data})
+        delete userinfo.openid;
+        socket.user.save(userinfo);
+        socket.send({action:"userinfo", ...socket.user.data})
     }
-    get({uid}, socket){
-        Mysql().getOne("user", {uid}).then(({nickname, headimgurl, userName, trust, })=>{
+    async get({uid}, socket){
 
-            socket.send({action:"userinfo", nickname,uid, headimgurl,userName, trust});
-        });
+        var user = await User.getByKey(uid);
+        socket.send({action:"userinfo",...user.baseinfo()});
+        
     }
-    getJSParam(data, socket){
-        Weixin.sns.jsParam(data).then((params)=>{user.send({ action:"jsParam", ...params})})
-    }
-    disconnect(data, user){
+    disconnect(data, socket){
 
-        console.log(user.nickName, "disconnect");
+        console.log(socket.user && socket.user.nickname, "disconnect");
     }
 }
 

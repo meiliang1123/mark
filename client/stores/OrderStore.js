@@ -14,9 +14,7 @@ class Model extends BaseModel {
 class Store extends BaseStore
 {
 
-    arrange(){
 
-    }
 
 
 }
@@ -24,9 +22,9 @@ class Store extends BaseStore
 var OrderStore = new Store(Model);
 export default OrderStore;
 
-UserStore.on("login",()=>{
-    UserStore.send({action:"order.getMyOrder"})
-})
+//UserStore.on("login",()=>{
+//    UserStore.send({action:"order.getMyOrder"})
+//})
 
 
 
@@ -35,7 +33,7 @@ dispatcher.Reg({
         _combines = combines;
     },
     orders({orders}){
-        
+
         OrderStore.set(orders);
     }
 }, "order");

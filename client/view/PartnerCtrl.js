@@ -57,18 +57,14 @@ class PartnerIndex extends React.Component{
             href: '#/partner/customer'
         },{
             icon: <img src={GIcon}/>,
-            label: '合伙人收入',
-            href: '#/partner/incoming'
+            label: '我的收入',
+            href: '#/me/account'
         },{
             icon: <img src={GIcon}/>,
-            label: '合伙人订单',
+            label: '订单',
             href: '#/partner/order'
         }
-        ,{
-            icon: <img src={GIcon}/>,
-            label: '合伙人产品',
-            href: '#/provider/product'
-        },
+
     ]
 
 
@@ -85,9 +81,7 @@ class PartnerIndex extends React.Component{
                     </CellBody>
                 </Cell></Cells>
                 <br/>
-                <Grids data={this.grids}>
-
-                </Grids>
+                <Grids data={this.grids} />
             </Page>
         )
 

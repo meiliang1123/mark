@@ -1,10 +1,18 @@
-import Mysql from "./classes/mysql";
-import Weixin from "./classes/weixin";
-import Youtu from "./classes/youtu"
-import Order from "./classes/order"
-import Util from "./action/util"
+import Order from "./models/order"
+import User from "./models/user"
 
-Util.imageWithQR({});
+(async ()=>{
+    var user = await User.getByKey(10000006)
+    var param = await Order.create({"1":1,"2":1}, user);
+    console.log(param);
+})()
+
+
+
+
+
+
+//Util.imageWithQR({});
 
 //require("./classes/wxdeliver")("aaa");
 

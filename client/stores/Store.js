@@ -1,4 +1,5 @@
 import EventEmitter from "events";
+import Model from "./Model"
 
 export default class Store extends EventEmitter{
     constructor(model,key = "id"){
@@ -28,7 +29,6 @@ export default class Store extends EventEmitter{
 
         if(!this.instances[id]) {
             this.instances[id] = new this.model(obj);
-            console.log(obj, "test");
             if(typeof this.refresh == "function"
                 && Object.keys(obj).length == 1
             ) {
@@ -42,9 +42,13 @@ export default class Store extends EventEmitter{
         return this.instances[id];
     }
     set(items) {
-        console.log(items);
-        if (! (items instanceof Array)) {
-            items = [items];
+        if(typeof items != "object") return ;
+        if(! (items instanceof Array)){
+            if ( items[this.model.keyProp]) {
+                items = [items];
+            }{
+                items = Object.values(items);
+            }
         }
 
         for (var key in items) {

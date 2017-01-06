@@ -39,20 +39,22 @@ function _genSaveSql(data, info, table){
 }
 
 function _genSelectSql(data, info, table){
+    var pre = `select * from  ${table} where `
+    if(typeof data =="string"){
+        return pre + data;
+    }
     let upd =["1=1"];
     Object.keys(data).map((k)=>{
 
         if(!info[k]) {
-            delete data[k] ;
             return;
         }
         if(typeof data[k] == "object"){
             data[k] = escape(JSON.stringify(data[k]));
         }
-
         upd.push(`${k}='${data[k]}'`);
     })
-    return `select * from  ${table} where ${upd.join(" and ")}`;
+    return `${pre} ${upd.join(" and ")}`;
 }
 
 function _newConnection(conf, obj){
@@ -78,6 +80,7 @@ class Mysql {
         return this.get(table, where).then((data)=>{return data[0]});
     }
     save(table,data){
+        console.log(table, data);
         if ("string" != typeof table) return "err table name";
         return this.getFields(table).then((info)=> {
             var sql = _genSaveSql(data, info, table);
@@ -90,6 +93,7 @@ class Mysql {
     }
 
     query(sql){
+        console.log(sql);
         return new Promise((resolve,reject)=>{
             this.conn.query(sql, (err, ret)=>{
                 if(err) console.log(sql, err);

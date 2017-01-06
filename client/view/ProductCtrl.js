@@ -5,33 +5,37 @@ import UserStore from "../stores/UserStore.js";
 import CartStore from "../stores/CartStore"
 import WeixinStore from "../stores/WeixinStore"
 
-ProductStore.on("payParam",(data)=>{
-
-});
-
 
 export default class View extends React.Component{
-    state = {
-        "data":{}
-        }
 
-    componentDidMount(){
-        document.title = "example";
+
+    constructor(props){
+        super(props);
+        this.refresh = this.refresh.bind(this);
         var id = Number.parseInt(this.props.params.id);
         this.model = ProductStore.instance(id);
-        console.log(this.model);
-        this.setState({"data": this.model.data})
-        this.model.on("change",()=>this.setState({"data": this.model.data}));
-        UserStore.on("change",()=>ProductStore.refresh(this.model))
-        ProductStore.refresh(this.model);
-
+        this.state = {
+            "data": this.model.data
+        }
+    }
+    refresh(){
+        this.setState({
+            "data": this.model.data
+        });
+    }
+    componentDidMount(){
+        document.title = "example";
+        this.model.on("change",this.refresh);
+    }
+    componentWillUnmount(){
+        this.model.removeListener("change", this.refresh);
     }
 
 
     render(){
         return <Content
             onCart={()=>CartStore.addCart(this.model.id)}
-            onBuy={()=>ProductStore.easyPay(this.model.id)}
+            onBuy={()=>this.props.router.push(`/pay/${this.model.id}`)}
             onPreview={(current, urls)=>{WeixinStore.previewImage(pic4share(current),urls.map(pic4share))}}
             data={this.state.data}
         ></Content>

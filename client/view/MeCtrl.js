@@ -47,10 +47,10 @@ class IndexView extends React.Component{
         {
             icon: <img src={GIcon}/>,
             label: '我的订单',
-            href: '#/order'
+            href: '#/me/order'
         },{
             icon: <img src={GIcon}/>,
-            label: '我的合伙人',
+            label: '我的服务商',
             href: '#/me/partner'
         },{
             icon: <img src={GIcon}/>,
@@ -69,7 +69,7 @@ class IndexView extends React.Component{
         return(
             <Page>
                 <Panel>
-                    <Cell access link onClick = {()=>this.props.router.push("/myinfo")}>
+                    <Cell access link onClick = {()=>this.props.router.push("/me/info")}>
                         <CellBody>
                             <MediaBox type="appmsg" href="javascript:void(0);">
                                 <MediaBoxHeader><img src = {this.state.headimgurl} /></MediaBoxHeader>

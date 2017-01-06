@@ -6,6 +6,7 @@ import {browserHistory} from "react-router";
 import Page from "./components/Page"
 import ProductList from "./components/ProductList"
 import Banner from "./components/Banner"
+import {CartIcon} from "./components/Cart"
 
 import {
     version,
@@ -30,6 +31,9 @@ import {
 }  from "./react-weui/lib/";
 
 
+UserStore.LoginPromise.then(()=>{
+    UserStore.send({action:'product.get'});
+})
 
 export default class View extends React.Component{
 
@@ -37,12 +41,26 @@ export default class View extends React.Component{
         "products":Object.values(ProductStore.get()),
         "saler": UserStore.saler,
     }
-
+    constructor(props){
+        super(props);
+        this.refresh = this.refresh.bind(this);
+    }
+    refresh(){
+       
+        this.setState({
+            saler:UserStore.saler,
+            "products":Object.values(ProductStore.get()),
+        })
+    }
     componentDidMount(){
+
         document.title = "markme· 心生MALL";
-        UserStore.send({action:'product.get'});
-        UserStore.saler.on("change",arg=>this.setState({saler:UserStore.saler}))
-        ProductStore.on("change",()=>{this.setState({"products":Object.values(ProductStore.get())})})
+        UserStore.saler.on("change",this.refresh)
+        ProductStore.on("change",this.refresh)
+    }
+    componentWillUnmount(){
+        UserStore.saler.removeListener("change",this.refresh)
+        ProductStore.removeListener("change",this.refresh)
     }
 
     onProduct(id){
@@ -67,6 +85,7 @@ class IndexView extends React.Component{
                 <img className="saler" src={this.props.saler.headimgurl} />
                 <Banner></Banner>
                 <ProductList {...this.props} ></ProductList>
+                <CartIcon></CartIcon>
             </Page>
 
         )

@@ -1,32 +1,48 @@
 var http = require('./classes/http');
 var Server = require("socket.io");
-var HMR = require("./classes/hmr");
+require("./classes/hmr");
 
 var io = Server(http);
 io.on('connection', function(socket){
-
     socket.on('message', function(data){
         console.log("recieved ", data)
         let {action, ...param} = data;
         if(!action) return ;
         var [mod, act ] = action.split(".");
-        var mod = getModule(`./action/${mod}`);
-        mod && mod[act] && mod[act](param, socket);
+        try{
+            var mod = getModule(`./action/${mod}`);
+            mod && mod[act] && mod[act](param, socket);
+        }catch (e){
+            console.log(e)
+        }
+
     });
 
     socket.on('disconnect', function(){
         var mod = getModule(`./action/user`);
         mod && mod["disconnect"] && mod["disconnect"](socket,socket);
     });
+    socket.checkLogin = checkLogin;
+    socket.checkLogin();
+
 });
 
+function checkLogin(){
+
+    if(this.user && this.user.openid){
+        return true;
+    } else{
+        this.send({action:"needLogin"});
+        return false;
+    }
+}
 
 function getModule(name){
     var mod = null;
     try{
         mod = require(name);
         if(mod.default) mod = mod.default;
-    }catch (e){console.log(`require module ${name} failed.`)}
+    }catch (e){console.log(`require module ${name} failed.`, e)}
     return mod;
 }
 

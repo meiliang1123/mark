@@ -6,7 +6,7 @@ class Action{
             user.send({type:'product', product});
         });
     }
-    
+
 }
 
 export default new Action();

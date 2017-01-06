@@ -2,7 +2,6 @@ import io from 'socket.io-client';
 import dispatcher from "../dispatcher";
 import BaseModel from "./Model";
 import BaseStore from "./Store";
-import WeixinStore from "./WeixinStore"
 import Util from "../util";
 
 let  socket = io();
@@ -13,6 +12,7 @@ socket.on('message',function(msg){
 });
 
 class Model extends BaseModel {
+    static keyProp = "uid"
     constructor(data){
         var dft = {
             openid:"",
@@ -45,18 +45,15 @@ class User extends BaseStore {
 
     }
 
-    getAddress (){
-        let {userName, postalCode , provinceName , cityName  , countryName , detailInfo, nationalCode , telNumber} = UserStore.me.data;
-        return {userName, postalCode , provinceName , cityName  , countryName , detailInfo, nationalCode , telNumber};
-    }
-
-    send(action){
-        console.log("user send", action);
+    async send(action){
+        await UserStore.LoginPromise;
         socket.send( action);
+        console.log("user send", action);
     }
     login(){
         var info = Util.loginInfo();
-        UserStore.send({action:"user.login", ...info});
+        socket.send({action:"user.login", ...info});
+        console.log("user login with:", info);
     }
     get me(){
         var uid = localStorage.uid;
@@ -71,24 +68,13 @@ class User extends BaseStore {
         UserStore.me.set(data);
         UserStore.send({action:"user.update", userinfo:data})
     }
-    LoginPromise = new Promise(broadcastLogin)
-    triggerAddress(force = false){
-
-        if(!this.getAddress().detailInfo || force){
-            WeixinStore.openAddress().then((data)=>{
-                UserStore.me.set(data);
-                UserStore.send({action:"user.update", userinfo:data})
-            })
-        }
-
+    pay(products, address){
+        UserStore.send({action:"pay.weixin", products, address});
     }
-
+    LoginPromise = new Promise(broadcastLogin)
 }
 
 var UserStore = new User(Model);
-UserStore.login();
-console.log(UserStore);
-
 
 export default UserStore;
 
@@ -105,14 +91,7 @@ var actions = {
         localStorage.setItem("openid", userinfo.openid);
         localStorage.setItem("uid", userinfo.uid);
         UserStore.set(userinfo);
-        UserStore.emit("login");
-        var url = window.location.origin + window.location.pathname +  window.location.search;
-        UserStore.send({action:'util.jsParam',client_url: url})
-        var {code, saler} = Util.getQuery();
-        if(saler){
-            UserStore.send({action:"user.update", saler})
 
-        }
         loginFlag = true;
 
     },
@@ -120,8 +99,7 @@ var actions = {
         if(userinfo.userinfo){
             userinfo = userinfo.userinfo;
         }
-        console.log(userinfo);
-      UserStore.set(userinfo);
+        UserStore.set(userinfo);
     },
 
 };

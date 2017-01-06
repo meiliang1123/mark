@@ -1,5 +1,5 @@
-import Weixin from "./weixin"
-import Mysql from "./mysql"
+import Weixin from "./../classes/weixin"
+import Mysql from "./../classes/mysql"
 
 module.exports = function deliver({xml:data}){
 

@@ -1,6 +1,6 @@
 import Mysql from "../classes/mysql";
 import Weixin from "../classes/weixin";
-import Order from "../classes/order"
+import Order from "../models/order"
 
 class Action{
     getPayParam({products}, socket){
@@ -16,6 +16,14 @@ class Action{
 
             socket.send({type:'payParam', payParam});
         });  //*/
+    }
+    async weixin({products,address}, socket){
+        if(!socket.checkLogin()) return;
+
+        var {body, nonce, fee} = await Order.create(socket.user, products, address);
+        var param = {body, out_trade_no: nonce, total_fee: fee, openid:socket.user.openid};
+        var payParam = await Weixin.pay.payParam(param);
+        socket.send({action:"wxPay", payParam});
     }
 }
 

@@ -27,7 +27,13 @@ import w,{
 
 
 
+
 export default class Cart extends React.Component{
+    render(){
+        return <div></div>
+    }
+}
+class old {
     state = {
         products:CartStore.getCartProduct(),
         cart: CartStore.getCart(),
@@ -131,7 +137,7 @@ export class CartPopup extends React.Component{
             <w.Popup show={this.props.show}>
                 <PopupHeader
                     left="关闭"
-                    right={<w.Button size="small" >购买</w.Button>}
+                    right="购买"
                     leftOnClick={this.props.onClose}
                     rightOnClick={()=>{this.props.onClose();ProductStore.cartPay()}}
                 />

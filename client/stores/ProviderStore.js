@@ -24,7 +24,7 @@ export default ProviderStore;
 
 
 
-UserStore.on("login",()=>UserStore.send({action:"provider.get"}));
+//UserStore.on("login",()=>UserStore.send({action:"provider.get"}));
 
 dispatcher.Reg({
     provider({provider}){

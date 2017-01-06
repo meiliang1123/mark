@@ -17,16 +17,18 @@ import IndexCtrl from "./view/IndexCtrl"
 import MeCtrl from "./view/MeCtrl";
 import MeInfo from "./view/MeInfo"
 import MePartner from "./view/MePartner"
+import MeOrder from "./view/MeOrder"
+import MeAccount from "./view/MeAccount"
 
-import OrderCtrl from "./view/OrderCtrl"
 import PartnerCtrl from "./view/PartnerCtrl"
 import PartnerInvolve from "./view/PartnerInvolve"
 import PartnerCustomer from "./view/PartnerCustomer"
+import PartnerOrder from "./view/PartnerOrder"
 
 import ProductCtrl from "./view/ProductCtrl"
 import ProviderCtrl from "./view/ProviderCtrl"
 
-
+import PayCtrl from "./view/PayCtrl"
 
 
 import "./app.less";
@@ -76,35 +78,35 @@ class Transitor extends React.Component {
                             transitionLeaveTimeout={500}
                             style={{height: '100%',paddingBottom:"50px"}}
                         >
-                            {React.cloneElement(this.props.children, {
+                            {  React.cloneElement(this.props.children, {
                                 key: this.props.location.pathname
                             })}
                         </ReactCSSTransitionGroup>
 
                     </TabBody>
 
-                    <CartIcon></CartIcon>
-                <TabBar>
-                    <TabBarItem
-                        active={this.state.tab == "index"}
-                        onClick={e=>this.tab({tab:"index"})}
-                        icon={<img src={IconGrid}/>}
-                        label="首页"
-                    />
 
-                    <TabBarItem
-                        active={this.state.tab == "partner"}
-                        onClick={e=>this.tab({tab:"partner"})}
-                        icon={<img src={IconYes}/>}
-                        label="合伙人"
-                    />
-                    <TabBarItem
-                        active={this.state.tab == "me"}
-                        onClick={e=>this.tab({tab:"me"})}
-                        icon={<img src={IconDot}/>}
-                        label="个人中心"
-                    />
-                </TabBar>
+                    <TabBar>
+                        <TabBarItem
+                            active={this.state.tab == "index"}
+                            onClick={e=>this.tab({tab:"index"})}
+                            icon={<img src={IconGrid}/>}
+                            label="首页"
+                        />
+
+                        <TabBarItem
+                            active={this.state.tab == "partner"}
+                            onClick={e=>this.tab({tab:"partner"})}
+                            icon={<img src={IconYes}/>}
+                            label="合伙人"
+                        />
+                        <TabBarItem
+                            active={this.state.tab == "me"}
+                            onClick={e=>this.tab({tab:"me"})}
+                            icon={<img src={IconDot}/>}
+                            label="个人中心"
+                        />
+                    </TabBar>
                 </Tab>
 
             </ReactCSSTransitionGroup>
@@ -122,21 +124,26 @@ ReactDOM.render(
         <Route path="/" component={Transitor}>
             <IndexRoute component={IndexCtrl}/>
             <Route  path="/index" component={IndexCtrl}/>
-            <Route path="/product/:id" component={ProductCtrl}/>
+
 
             <Route path="/me" component={MeCtrl}>
                 <Route path="info" component={MeInfo}/>
                 <Route path="partner" component={MePartner} />
+                <Route path="order" component={MeOrder}/>
+                <Route path="account" component={MeAccount}/>
             </Route>
-            <Route path="/order" component={OrderCtrl}/>
+
             <Route path="/partner" component={PartnerCtrl} >
-                <Route path="customer" component={PartnerCustomer}/>
+                <Route path="customer(/:uid)" component={PartnerCustomer}/>
                 <Route path="involve" component={PartnerInvolve}/>
+                <Route path="order" component={PartnerOrder}/>
             </Route>
 
             <Route path="/provider" component={ProviderCtrl}/>
-        </Route>
 
+        </Route>
+        <Route path="/product/:id" component={ProductCtrl}/>
+        <Route path="/pay(/:pid)" component={PayCtrl}/>
     </Router>
 
-, document.getElementById('root'));
+    , document.getElementById('root'));

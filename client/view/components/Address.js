@@ -1,238 +1,145 @@
-import React from 'react';
-import { ButtonArea,
-    Button,
-    CellsTitle,
-    CellsTips,
-    Cell,
-    CellHeader,
-    CellBody,
-    CellFooter,
-    Form,
-    FormCell,
-    Icon,
-    Input,
-    Label,
-    TextArea,
-    Switch,
-    Radio,
-    Checkbox,
-    Select,
-    VCode,
-    Agreement,
-    Toptips
-} from "../react-weui/lib/";
+import React from "react";
+import {
+    //0.4.x
+    Button, ButtonArea,Cells,CellsTitle,CellsTips,Cell,CellHeader,CellBody,CellFooter,
+    Mask,Form,FormCell,Radio,Checkbox,Input,TextArea,Switch,Select,Uploader,Label,
+    Toast,Progress,ActionSheet,Dialog,Msg,Article,Icon,Grids,
+    Grid,GridIcon,GridLabel,
+    Panel,PanelHeader,PanelBody,PanelFooter,
+    MediaBox,MediaBoxHeader,MediaBoxBody,MediaBoxTitle,MediaBoxDescription,MediaBoxInfo,MediaBoxInfoMeta,
+    NavBar,NavBarItem,Tab,TabBody,TabBodyItem,TabBar,TabBarIcon,TabBarItem,TabBarLabel,SearchBar,
+
+    //1.0.0
+    Flex,FlexItem,VCode,Agreement,Toptips,Gallery,GalleryDelete,
+    Footer,FooterText,FooterLinks,FooterLink,LoadMore,
+    Preview,PreviewHeader,PreviewBody,PreviewFooter,PreviewItem,PreviewButton,
+    Picker,CityPicker,
+
+    //non-standard
+    Popup,PopupHeader
+}  from "../react-weui/lib/";
+import Page from "./Page"
+import BoxList from "./BoxList"
 
 
 
-export default class inputDemo extends React.Component {
+import ProductStore from "./../../stores/ProductStore"
+import CartStore from "./../../stores/CartStore"
+import AddressStore from "./../../stores/AddressStore"
+import UserStore from "./../../stores/UserStore"
 
-    constructor(props){
-        super(props);
+import cnCity from "./cnCity"
 
-        this.state = {
-            showToptips: false
-        }
+export default class Address extends React.Component{
+    state = {city_show:false}
+    componentWillMount(){
+        AddressStore.on("change", this.forceUpdate.bind(this))
     }
-
-    render(){
+    renderAddresses(){
+        var addrs = AddressStore.get();
+        var current = AddressStore.current();
         return (
-            <div className="input" title="Input" subTitle="表单输入">
-                <CellsTitle>Radio</CellsTitle>
-                <Form radio>
-                    <FormCell radio>
-                        <CellBody>Option 1</CellBody>
+            <Form radio>
+                {Object.values(addrs).map(addr=>{
+                    return <FormCell key={addr.id} radio onChange={e=>AddressStore.setCurrent(AddressStore.get(e.target.value))}>
+                        <CellBody>{addr.text}</CellBody>
                         <CellFooter>
-                            <Radio name="radio1" value="1" defaultChecked/>
+                            <Radio name="radio1" value={addr.id} checked = {current.id === addr.id} defaultChecked={current.id === addr.id} />
                         </CellFooter>
                     </FormCell>
-                    <FormCell radio>
-                        <CellBody>Option 2</CellBody>
-                        <CellFooter>
-                            <Radio name="radio1" value="2"/>
-                        </CellFooter>
-                    </FormCell>
-                    <Cell link>
-                        <CellBody>More</CellBody>
-                    </Cell>
-                </Form>
+                })}
 
-                <CellsTitle>Checkbox</CellsTitle>
-                <Form checkbox>
-                    <FormCell checkbox>
-                        <CellHeader>
-                            <Checkbox name="checkbox1" value="1"/>
-                        </CellHeader>
-                        <CellBody>Option 1</CellBody>
-                    </FormCell>
-                    <FormCell checkbox>
-                        <CellHeader>
-                            <Checkbox name="checkbox2" value="2" defaultChecked/>
-                        </CellHeader>
-                        <CellBody>Option 2</CellBody>
-                    </FormCell>
-                    <Cell link>
-                        <CellBody>More</CellBody>
-                    </Cell>
-                </Form>
 
-                <CellsTitle>Switch</CellsTitle>
-                <Form>
-                    <FormCell switch>
-                        <CellBody>Switch Label</CellBody>
-                        <CellFooter>
-                            <Switch/>
-                        </CellFooter>
-                    </FormCell>
-                </Form>
-
-                <CellsTitle>Forms</CellsTitle>
-                <Form>
-                    <FormCell>
-                        <CellHeader>
-                            <Label>QQ</Label>
-                        </CellHeader>
-                        <CellBody>
-                            <Input type="tel" placeholder="Enter your qq#"/>
-                        </CellBody>
-                    </FormCell>
-                    <FormCell vcode>
-                        <CellHeader>
-                            <Label>Phone</Label>
-                        </CellHeader>
-                        <CellBody>
-                            <Input type="tel" placeholder="Enter your cellphone #"/>
-                        </CellBody>
-                        <CellFooter>
-                            <Button type="vcode">Send</Button>
-                        </CellFooter>
-                    </FormCell>
-                    <FormCell>
-                        <CellHeader>
-                            <Label>Date</Label>
-                        </CellHeader>
-                        <CellBody>
-                            <Input type="date" defaultValue="" onChange={ e=> console.log(e.target.value)}/>
-                        </CellBody>
-                    </FormCell>
-                    <FormCell>
-                        <CellHeader>
-                            <Label>Datetime</Label>
-                        </CellHeader>
-                        <CellBody>
-                            <Input type="datetime-local" defaultValue="" placeholder=""/>
-                        </CellBody>
-                    </FormCell>
-                    <FormCell vcode>
-                        <CellHeader>
-                            <Label>VCode</Label>
-                        </CellHeader>
-                        <CellBody>
-                            <Input type="number" placeholder="Enter the code"/>
-                        </CellBody>
-                        <CellFooter>
-
-                        </CellFooter>
-                    </FormCell>
-                </Form>
-                <CellsTips>Form Footer Tips</CellsTips>
-
-                <CellsTitle>Warnings</CellsTitle>
-                <Form>
-                    <FormCell warn>
-                        <CellHeader>
-                            <Label>QQ</Label>
-                        </CellHeader>
-                        <CellBody>
-                            <Input type="text" defaultValue="Oops..."/>
-                        </CellBody>
-                        <CellFooter>
-                            <Icon value="warn" />
-                        </CellFooter>
-                    </FormCell>
-                </Form>
-
-                <CellsTitle>Textarea</CellsTitle>
-                <Form>
-                    <FormCell>
-                        <CellBody>
-                            <TextArea placeholder="Enter your comments" rows="3" maxlength="200"></TextArea>
-                        </CellBody>
-                    </FormCell>
-                </Form>
-
-                <CellsTitle>选择</CellsTitle>
-                <Form>
-                    <FormCell select selectPos="before">
-                        <CellHeader>
-                            <Select>
-                                <option value="1">+86</option>
-                                <option value="2">+80</option>
-                                <option value="3">+84</option>
-                                <option value="4">+87</option>
-                            </Select>
-                        </CellHeader>
-                        <CellBody>
-                            <Input type="tel" placeholder="Enter Phone"/>
-                        </CellBody>
-                    </FormCell>
-                </Form>
-
-                <CellsTitle>Selects</CellsTitle>
-                <Form>
-                    <FormCell select>
-                        <CellBody>
-                            <Select defaultValue="2">
-                                <option value="1">WeChat</option>
-                                <option value="2">QQ</option>
-                                <option value="3">Email</option>
-                            </Select>
-                        </CellBody>
-                    </FormCell>
-                    <FormCell select selectPos="after">
-                        <CellHeader>
-                            <Label>Country</Label>
-                        </CellHeader>
-                        <CellBody>
-                            <Select data={[
-                            {
-                                value: 1,
-                                label: 'China'
-                            },
-                            {
-                                value: 2,
-                                label: 'United States'
-                            },
-                            {
-                                value: 3,
-                                label: 'Germany'
-                            }
-                        ]} />
-                        </CellBody>
-                    </FormCell>
-                </Form>
-                <Agreement>
-                    &nbsp;&nbsp;I agree to the <a href="javascript:;">WeUI Terms and Privacy</a>
-                </Agreement>
-
-                <ButtonArea>
-                    <Button
-                        //button to display toptips
-                        onClick={ e=> {
-                        if(this.state.showToptips) return;
-                        this.setState({showToptips: !this.state.showToptips})
-                        window.setTimeout(e=> this.setState({showToptips: !this.state.showToptips}), 2000)
-                    }
-                }>
-                        OK
-                    </Button>
-                </ButtonArea>
-
-                <Toptips warn
-                         show={this.state.showToptips}
-                >
-                    Oops, something is wrong!
-                </Toptips>
-            </div>
+                <Cell link  onClick = {e=>AddressStore.getWeixinAddress()}>
+                    <CellBody>获取微信地址</CellBody>
+                </Cell>
+                <Cell link  onClick = {e=>AddressStore.resetCurrent()}>
+                    <CellBody>新增地址</CellBody>
+                </Cell>
+            </Form>
         )
     }
+    render(){
+        var addr = AddressStore.current();
+
+        return (<div>
+
+            {this.renderAddresses()}
+
+
+            <Form>
+                <FormCell>
+                    <CellHeader>所在地区：</CellHeader>
+                    <CellBody>
+                        <Input type="text"
+                               value={addr.city}
+                               onClick={ e=> {
+                                    e.preventDefault();
+                                    this.setState({city_show: true})
+                                }}
+                               placeholder="点击选择城市"
+                               readOnly={true}
+                        />
+                    </CellBody>
+
+                </FormCell>
+                <FormCell>
+                    <CellHeader>详细地址：</CellHeader>
+                    <CellBody>
+                        <Input type="text"
+                               value={addr.detail}
+                               onChange={e=>AddressStore.setCurrent({detail:e.target.value})}
+                               placeholder="输入地址"
+                        />
+                    </CellBody>
+                </FormCell>
+                <FormCell>
+                <CellHeader>收件人：</CellHeader>
+                <CellBody>
+                    <Input type="text"
+                           value={addr.name}
+                           onChange={e=>AddressStore.setCurrent({name:e.target.value})}
+                           placeholder="输入姓名"
+                    />
+                </CellBody>
+            </FormCell>
+                <FormCell>
+                    <CellHeader>电话号码：</CellHeader>
+                    <CellBody>
+                        <Input type="text"
+                               value={addr.tel}
+                               onChange={e=>AddressStore.setCurrent({tel:e.target.value})}
+                               placeholder="输入电话号码"
+                        />
+                    </CellBody>
+                </FormCell>
+                <FormCell>
+                    <CellHeader>邮政编码：</CellHeader>
+                    <CellBody>
+                        <Input type="text"
+                               value={addr.postal}
+                               onChange={e=>AddressStore.setCurrent({postal:e.target.value})}
+                               placeholder="输入邮政编码"
+                        />
+                    </CellBody>
+                </FormCell>
+                <CityPicker
+                    data={cnCity}
+                    onCancel={e=>this.setState({city_show: false})}
+                    onChange={text=>{this.setState({city_show: false});AddressStore.setCurrent({city:text})}}
+                    selected={[5,2,3]}
+                    show={this.state.city_show}
+                />
+
+            </Form>
+            <ButtonArea>
+                <Button onClick={e=>AddressStore.saveCurrent()}>保存</Button>
+            </ButtonArea>
+
+
+
+        </div>);
+    }
 }
+
+

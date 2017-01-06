@@ -46,10 +46,16 @@ function getQuery(){
     return str.slice(1).split("&").map((kv)=>kv.split("=")).reduce((ret,entry)=>{let [key,val]= entry;ret[key] = val; return ret;},{})
 }
 
+function money(val){
+    val = parseInt(val)
+    return `￥${val / 100}`
+}
+
 
 export default {
     loginInfo,
     weixinRedirect,
     editAddress,
     getQuery,
+    money,
 };

@@ -9,10 +9,11 @@ var _combines = [];
 
 class Store extends BaseStore
 {
-    agent(action, reg, callback){
+    agent(action,callback){
+        var reg = action.action;
         var act = {};
         act[reg] = callback;
-        dispatcher.Reg(act);
+        dispatcher.Reg(act,reg);
         UserStore.send(action);
     }
 }

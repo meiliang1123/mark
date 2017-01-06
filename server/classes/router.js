@@ -1,6 +1,4 @@
-import Order from "./order"
 import {parseString} from "xml2js";
-
 var express = require("express");
 var path = require("path");
 var router = express.Router();
@@ -18,7 +16,7 @@ router.post("/weixin",function(req, res, next){
 
     parseString(msg,(err, data)=>{
         try{
-            require("./wxdeliver.js")(data);
+            require("../action/weixin.js").msg(data);
         }catch (e){console.log(e)}
 
     });
@@ -67,7 +65,10 @@ router.get("/share/:uid/*", function(req, res, next){
 router.all("/weixin/callback", function(req, res, next){
 
     parseString(req.body,(err, data)=>{
-        Order.combinePayed(data.xml);
+        try{
+            require("../action/weixin.js").pay(data);
+        }catch (e){console.log(e)}
+
         res.set('Content-Type', 'text/xml');
         res.send("<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>");
     })

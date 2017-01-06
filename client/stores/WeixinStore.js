@@ -1,6 +1,7 @@
 import dispatcher from "../dispatcher";
 import BaseModel from "./Model";
 import BaseStore from "./Store";
+import UserStore from "./UserStore"
 import Util from "../util";
 
 class Store extends BaseStore{
@@ -43,6 +44,16 @@ class Store extends BaseStore{
             })
         })
     }
+    triggerAddress(force = false){
+
+        if(!this.getAddress().detailInfo || force){
+            WeixinStore.openAddress().then((data)=>{
+                UserStore.me.set(data);
+                UserStore.send({action:"user.update", userinfo:data})
+            })
+        }
+
+    }
 
 }
 
@@ -51,8 +62,12 @@ var WeixinStore = new Store(BaseModel);
 export default WeixinStore;
 
 
+var url = window.location.origin + window.location.pathname +  window.location.search;
+UserStore.send({action:'util.jsParam',client_url: url})
 
-var actions = {
+
+
+var actions = new class{
     jsParam(param){
         //alert(JSON.stringify(param));
         var def = {
@@ -60,6 +75,19 @@ var actions = {
             jsApiList:['openAddress',"chooseWXPay","chooseImage","previewImage", "uploadImage" ]
         }
         wx.config({...def,...param});
+    }
+    wxPay({payParam}){
+
+        payParam.timestamp = payParam.timeStamp;
+
+        wx.ready(()=>{
+            wx.chooseWXPay({
+                ...payParam,
+                success:()=>{
+                    console.log("aa")
+                }
+            })})
+
     }
 };
 dispatcher.Reg(actions, "weixin");
